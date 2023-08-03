@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -25,8 +24,7 @@ SECRET_KEY = 'django-insecure-xkpyfo8&mu9n77ztw^o$co(j_b-!4m%6c($w#4n_n#q5=1m62h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 
@@ -36,8 +34,15 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
-    'main.apps.MainConfig'
+    'main.apps.MainConfig',
+
+    # Авторизация
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.steam',
 ]
 
 MIDDLEWARE = [
@@ -70,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'twim_skill_site.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -81,6 +85,14 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+    # Необходим для входа по имени пользователя в админку Django, независимо от `allauth`.
+    'django.contrib.auth.backends.ModelBackend',
+    # Специфические методы аутентификации, такие как вход по электронной почте
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+LOGIN_REDIRECT_URL = '/'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -100,7 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -112,7 +123,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
@@ -122,3 +132,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Для авторизации
+SITE_ID = 1
+
+# С таким параметром происходит вход, но есть ошибки
+SOCIALACCOUNT_PROVIDERS = {
+    'steam': {
+        'APP': {
+            'client_id': 'CDD932634458CE3798904E2D4BD40223',
+            'secret': 'CDD932634458CE3798904E2D4BD40223',
+            'key': 'CDD932634458CE3798904E2D4BD40223'
+        }
+    }
+}

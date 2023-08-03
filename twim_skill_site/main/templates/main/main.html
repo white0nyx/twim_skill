@@ -6,8 +6,12 @@
 </head>
 <body>
     <div id="header">
-        <p>facietlvl: 2, twim coin: 10, twim-lvl-1</p>
-        <a href="https://steamcommunity.com/openid/login">Войти через Steam</a>
+        <p>facietlvl: 2, twim coin: 10, twim-lvl: 1</p>
+        {% if user.is_authenticated %}
+        <a href="/profile">Профиль</a>
+        {% else %}
+        <a href="{% url 'account_login' %}">Войти через Steam</a>
+        {% endif %}
     </div>
     <div id="content">
         <h1>Доступные серверы</h1>
