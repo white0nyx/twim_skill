@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Мой аккаунт</title>
+</head>
+<body>
+<h1>Данные вашего аккаунта:</h1>
+<!--{{user_data.extra_data}}-->
+<img src="{{ user_data.extra_data.avatarfull}}">
+<br>
+Никнейм: {{user_data.extra_data.personaname}}
+<br>
+<a href="{{user_data.extra_data.profileurl}}">Ссылка на профиль</a>
+<br>
+<br>
+<a href="{% url 'account_logout' %}">Выйти</a> | <a href="/">На главную</a>
+</body>
+</html>
