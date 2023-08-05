@@ -5,41 +5,48 @@
     <title>TwimSkillMain</title>
 </head>
 <body>
-    <div id="header">
-        <p>facietlvl: 2, twim coin: 10, twim-lvl: 1</p>
-        {% if user.is_authenticated %}
-        <a href="/profile">Профиль</a>
-        {% else %}
-        <a href="{% url 'account_login' %}">Войти через Steam</a>
-        {% endif %}
-    </div>
-    <div id="content">
-        <h1>Доступные серверы</h1>
-        <ul id="servers">
-            <!-- Здесь будут добавляться серверы динамически -->
+<div id="header">
+    {% if user.is_authenticated %}
+    <p>facietlvl: 2, twim coin: 10, twim-lvl: 1</p>
+    <a href="/profile">Профиль</a>
+    {% else %}
+    {% load socialaccount %}
+    {% get_providers as socialaccount_providers %}
+    {% for provider in socialaccount_providers %}
+    {% if provider.id == "openid" %}
+    {% endif %}
+      <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}}"
+         href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">Войти через {{provider.name}}</a>
+    {% endfor %}
+{% endif %}
+</div>
+<div id="content">
+    <h1>Доступные серверы</h1>
+    <ul id="servers">
+        <!-- Здесь будут добавляться серверы динамически -->
 
-            <li>
-                <p>Тип игры: Deathmatch</p>
-                <p>Карта: de_dust2</p>
-                <p>Свободных мест: 5/16</p>
-                <p>Требуемый уровень: 1+</p>
-                <button>Подключиться</button>
-            </li>
-            <hr>
-            <li>
-                <p>Тип игры: Capture the Flag</p>
-                <p>Карта: cs_office</p>
-                <p>Свободных мест: 8/32</p>
-                <p>Требуемый уровень: 3+</p>
-                <button>Подключиться</button>
-            </li>
-        </ul>
-    </div>
-    <div id="sidebar">
-        <h2>Фильтры</h2>
-        <label for="price-range">Цена:</label>
-        <input type="range" id="price-range" min="0" max="100" value="50">
-        <button id="apply-filters">Применить фильтрацию</button>
-    </div>
+        <li>
+            <p>Тип игры: Deathmatch</p>
+            <p>Карта: de_dust2</p>
+            <p>Свободных мест: 5/16</p>
+            <p>Требуемый уровень: 1+</p>
+            <button>Подключиться</button>
+        </li>
+        <hr>
+        <li>
+            <p>Тип игры: Capture the Flag</p>
+            <p>Карта: cs_office</p>
+            <p>Свободных мест: 8/32</p>
+            <p>Требуемый уровень: 3+</p>
+            <button>Подключиться</button>
+        </li>
+    </ul>
+</div>
+<div id="sidebar">
+    <h2>Фильтры</h2>
+    <label for="price-range">Цена:</label>
+    <input type="range" id="price-range" min="0" max="100" value="50">
+    <button id="apply-filters">Применить фильтрацию</button>
+</div>
 </body>
 </html>

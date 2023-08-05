@@ -2,7 +2,6 @@
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Sign Out" %}{% endblock %}
 
 {% block content %}
 <h1>{% trans "Sign Out" %}</h1>
@@ -16,6 +15,8 @@
   {% endif %}
   <button type="submit">{% trans 'Sign Out' %}</button>
 </form>
+
+<a href="/">На главную</a>
 
 
 {% endblock %}

@@ -13,8 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from importlib import import_module
+
+from allauth import app_settings
+from allauth.account import views
+from allauth.socialaccount import providers
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 
 from main.views import MainPage, ProfilePage
 
@@ -22,8 +27,21 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', MainPage.as_view(), name='main'),
     path('profile/', ProfilePage.as_view(), name='profile'),
+    path("logout/", views.logout, name="account_logout")
 ]
 
-urlpatterns += [
-    path('accounts/', include('allauth.urls'))
-]
+# URL для социальных сетей. В частности Steam.
+if app_settings.SOCIALACCOUNT_ENABLED:
+    urlpatterns += [path("social/", include("allauth.socialaccount.urls"))]
+
+provider_urlpatterns = []
+for provider in providers.registry.get_list():
+    try:
+        prov_mod = import_module(provider.get_package() + ".urls")
+    except ImportError:
+        continue
+    prov_urlpatterns = getattr(prov_mod, "urlpatterns", None)
+    if prov_urlpatterns:
+        provider_urlpatterns += prov_urlpatterns
+
+urlpatterns += provider_urlpatterns
