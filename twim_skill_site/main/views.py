@@ -1,8 +1,10 @@
 from allauth.socialaccount.models import SocialAccount
 from django.core.handlers.wsgi import WSGIRequest
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
 import requests
+
+
 
 
 class MainPage(ListView):
@@ -40,6 +42,10 @@ class ProfilePage(DetailView):
 
     def get(self, request: WSGIRequest, *args, **kwargs):
         """Обработка get-запроса"""
+
+        if not request.user.is_authenticated:
+            return redirect('main')
+
         user_data = SocialAccount.objects.filter(user=request.user)
         context = {}
 
