@@ -1,10 +1,8 @@
 from allauth.socialaccount.models import SocialAccount
-from django.contrib.auth.models import User
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 import requests
-from bs4 import BeautifulSoup
 
 
 class MainPage(ListView):
@@ -12,8 +10,12 @@ class MainPage(ListView):
 
     def get(self, request, *args, **kwargs):
         """Обработка get-запроса"""
-        user_data = SocialAccount.objects.filter(user=request.user)
+
+        user_data = None
         context = {}
+
+        if request.user.is_authenticated:
+            user_data = SocialAccount.objects.filter(user=request.user)
 
         if user_data:
             user_data = user_data[0]
