@@ -14,7 +14,7 @@ def get_all_user_data(request: WSGIRequest):
     if request.user.is_authenticated:
         user_data = SocialAccount.objects.filter(user=request.user)
 
-        # Проверка на то, является ли пользователь админом
+        # Проверка на то, не является ли пользователь админом
         if user_data:
             user_data = user_data[0]
 
