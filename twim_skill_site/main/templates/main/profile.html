@@ -6,7 +6,6 @@
 </head>
 <body>
 <h1>Данные вашего аккаунта Steam:</h1>
-<!--{{user_data.extra_data}}-->
 <img src="{{ user_data.extra_data.avatarfull}}">
 <br>
 Никнейм: {{user_data.extra_data.personaname}}
@@ -14,19 +13,19 @@
 <a href="{{user_data.extra_data.profileurl}}">Ссылка на профиль</a>
 <br>
 <br>
-{% if faceit_data %}
+{% if faceit_user_data %}
 <h1>Данные вашего аккаунта FaceIT</h1>
-<img src="{{ faceit_data.avatar}}"><br>
-id: {{ faceit_data.id }}<br>
-guid: {{ faceit_data.guid }}<br>
-Никнейм: {{ faceit_data.nickname }}<br>
-Статус: {{ faceit_data.status }}<br>
-Страна: {{ faceit_data.country }}<br>
-Верификация: {{ faceit_data.verified }}<br>
+<img src="{{ faceit_user_data.avatar}}"><br>
+id: {{ faceit_user_data.id }}<br>
+guid: {{ faceit_user_data.guid }}<br>
+Никнейм: {{ faceit_user_data.nickname }}<br>
+Статус: {{ faceit_user_data.status }}<br>
+Страна: {{ faceit_user_data.country }}<br>
+Верификация: {{ faceit_user_data.verified }}<br>
 
-{% if faceit_data.games %}
+{% if faceit_user_data.games %}
 <h2>Ваши игры</h2>
-{% for game in faceit_data.games %}
+{% for game in faceit_user_data.games %}
 Игра: {{ game.name }}<br>
 Уровень: {{ game.skill_level }}<br><br>
 {% endfor %}

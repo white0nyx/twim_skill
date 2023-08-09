@@ -12,8 +12,21 @@ class MainPage(ListView):
 
     def get(self, request, *args, **kwargs):
         """Обработка get-запроса"""
-
+        user_data = SocialAccount.objects.filter(user=request.user)
         context = {}
+
+        if user_data:
+            user_data = user_data[0]
+
+            user_steam_id = user_data.extra_data.get('steamid')
+
+            # Получение данных FaceIT по Steam ID
+            request_for_faceit_data = 'https://api.faceit.com/search/v1/?limit=3&query=' + user_steam_id
+            faceit_user_data = requests.get(request_for_faceit_data).json().get('payload').get('players').get('results')
+
+            if faceit_user_data:
+                faceit_user_data = faceit_user_data[0]
+                context['faceit_user_data'] = faceit_user_data
 
         return render(request, 'main/main.html', context)
 
@@ -36,11 +49,11 @@ class ProfilePage(DetailView):
 
             # Получение данных FaceIT по Steam ID
             request_for_faceit_data = 'https://api.faceit.com/search/v1/?limit=3&query=' + user_steam_id
-            faceit_data = requests.get(request_for_faceit_data).json().get('payload').get('players').get('results')
+            faceit_user_data = requests.get(request_for_faceit_data).json().get('payload').get('players').get('results')
 
-            if faceit_data:
-                faceit_data = faceit_data[0]
-                context['faceit_data'] = faceit_data
+            if faceit_user_data:
+                faceit_user_data = faceit_user_data[0]
+                context['faceit_user_data'] = faceit_user_data
 
         else:
             user_data = {

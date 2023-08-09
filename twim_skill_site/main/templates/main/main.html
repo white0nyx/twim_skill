@@ -7,7 +7,7 @@
 <body>
 <div id="header">
     {% if user.is_authenticated %}
-    <p>facietlvl: 2, twim coin: 10, twim-lvl: 1</p>
+    <p>facietlvl: {% if faceit_user_data %} {{ faceit_user_data.games.0.skill_level }} {% else %} НЕТ ДАННЫХ {% endif %}, twim coin: НЕТ ДАННЫХ, twim-lvl: НЕТ ДАННЫХ</p>
     <a href="/profile">Профиль</a>
     {% else %}
     {% load socialaccount %}
