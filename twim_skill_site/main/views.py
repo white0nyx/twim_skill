@@ -8,26 +8,21 @@ import requests
 def get_all_user_data(request: WSGIRequest):
     """Формирование всех данных пользователя"""
 
-    user_data = None
+    steam_user_data = None
     faceit_user_data = None
 
-    if request.user.is_authenticated:
-        user_data = SocialAccount.objects.filter(user=request.user)
+    if request.user.is_authenticated and not request.user.is_superuser:
 
-        # Проверка на то, является ли пользователь админом
-        if user_data:
-            user_data = user_data[0]
+        # Получение данных Steam
+        steam_user_data = SocialAccount.objects.filter(user=request.user)[0]
+        user_steam_id = steam_user_data.extra_data.get('steamid')
 
-            user_steam_id = user_data.extra_data.get('steamid')
+        # Получение данных FaceIT
+        request_for_faceit_data = 'https://api.faceit.com/search/v1/?limit=3&query=' + user_steam_id
+        faceit_user_data = requests.get(request_for_faceit_data).json().get('payload', {}).get('players', {}).get('results')
+        faceit_user_data = faceit_user_data[0] if faceit_user_data else None
 
-            # Получение данных FaceIT по Steam ID
-            request_for_faceit_data = 'https://api.faceit.com/search/v1/?limit=3&query=' + user_steam_id
-            faceit_user_data = requests.get(request_for_faceit_data).json().get('payload').get('players').get('results')
-
-            if faceit_user_data:
-                faceit_user_data = faceit_user_data[0]
-
-    return {'user_data': user_data, 'faceit_user_data': faceit_user_data}
+    return {'steam_user_data': steam_user_data, 'faceit_user_data': faceit_user_data}
 
 
 class MainPage(ListView):

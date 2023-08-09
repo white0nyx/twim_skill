@@ -6,11 +6,11 @@
 </head>
 <body>
 <h1>Данные вашего аккаунта Steam:</h1>
-<img src="{{ user_data.extra_data.avatarfull}}">
+<img src="{{ steam_user_data.extra_data.avatarfull}}">
 <br>
-Никнейм: {{user_data.extra_data.personaname}}
+Никнейм: {{steam_user_data.extra_data.personaname}}
 <br>
-<a href="{{user_data.extra_data.profileurl}}">Ссылка на профиль</a>
+<a href="{{steam_user_data.extra_data.profileurl}}">Ссылка на профиль</a>
 <br>
 <br>
 {% if faceit_user_data %}
