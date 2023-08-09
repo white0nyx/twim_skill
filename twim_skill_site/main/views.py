@@ -10,6 +10,7 @@ def get_all_user_data(request: WSGIRequest):
 
     user_data = None
     faceit_user_data = None
+
     if request.user.is_authenticated:
         user_data = SocialAccount.objects.filter(user=request.user)
 
@@ -57,5 +58,4 @@ class ProfilePage(DetailView):
 
         context = {}
         context.update(get_all_user_data(request))
-        print(context)
         return render(request, 'main/profile.html', context)
