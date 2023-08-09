@@ -1,5 +1,4 @@
 from allauth.socialaccount.models import SocialAccount
-from django.contrib.auth.models import User
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
@@ -48,6 +47,11 @@ class ProfilePage(DetailView):
     def get(self, request: WSGIRequest, *args, **kwargs):
         """Обработка get-запроса"""
 
+        # Редирект для администраторов
+        if request.user.is_superuser:
+            return render(request, 'main/admin_profile.html')
+
+        # Редирект на главную, если пользователь не авторизован
         if not request.user.is_authenticated:
             return redirect('main')
 
