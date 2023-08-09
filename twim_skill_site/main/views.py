@@ -37,8 +37,6 @@ class MainPage(ListView):
 
 class ProfilePage(DetailView):
     """Класс представления страницы профиля пользователя"""
-    model = SocialAccount
-    template_name = 'main/profile.html'
 
     def get(self, request: WSGIRequest, *args, **kwargs):
         """Обработка get-запроса"""
