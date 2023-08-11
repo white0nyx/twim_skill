@@ -3,3 +3,4 @@ venv
 *.sqlite3
 *draft*.*
 *.log
+.env

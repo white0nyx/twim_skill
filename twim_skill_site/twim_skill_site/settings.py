@@ -10,8 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import logging
 from pathlib import Path
+
+from environs import Env
+
+# Подгрузка конфиденциальных переменных
+env = Env()
+env.read_env('.env')
+STEAM_TOKEN = env.str('STEAM_TOKEN')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -141,9 +147,9 @@ SITE_ID = 1
 SOCIALACCOUNT_PROVIDERS = {
     'steam': {
         'APP': {
-            'client_id': 'CDD932634458CE3798904E2D4BD40223',
-            'secret': 'CDD932634458CE3798904E2D4BD40223',
-            'key': 'CDD932634458CE3798904E2D4BD40223'
+            'client_id': STEAM_TOKEN,
+            'secret': STEAM_TOKEN,
+            'key': STEAM_TOKEN
         }
     }
 }
