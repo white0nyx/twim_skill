@@ -19,6 +19,12 @@ env = Env()
 env.read_env('.env')
 STEAM_TOKEN = env.str('STEAM_TOKEN')
 
+POSTGRESQL_DB_NAME = env.str('POSTGRESQL_DB_NAME')
+POSTGRESQL_DB_USER = env.str('POSTGRESQL_DB_USER')
+POSTGRESQL_DB_PASSWORD = env.str('POSTGRESQL_DB_PASSWORD')
+POSTGRESQL_DB_HOST = env.str('POSTGRESQL_DB_HOST')
+POSTGRESQL_DB_PORT = env.str('POSTGRESQL_DB_PORT')
+
 # Пути сборки внутри проекта выглядят следующим образом: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -81,8 +87,12 @@ WSGI_APPLICATION = 'twim_skill_site.wsgi.application'
 # Базы данных
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': POSTGRESQL_DB_NAME,
+        'USER': POSTGRESQL_DB_USER,
+        'PASSWORD': POSTGRESQL_DB_PASSWORD,
+        'HOST': POSTGRESQL_DB_HOST,
+        'PORT': POSTGRESQL_DB_PORT,
     }
 }
 
