@@ -41,6 +41,7 @@ class MainPage(ListView):
 
 class ProfilePage(DetailView):
     """Класс представления страницы профиля пользователя"""
+
     def get(self, request: WSGIRequest, *args, **kwargs):
         """Обработка get-запроса"""
 

@@ -19,22 +19,18 @@ env = Env()
 env.read_env('.env')
 STEAM_TOKEN = env.str('STEAM_TOKEN')
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Пути сборки внутри проекта выглядят следующим образом: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# ПРЕДУПРЕЖДЕНИЕ О БЕЗОПАСНОСТИ: храните секретный ключ, используемый в производстве, в тайне!
 SECRET_KEY = 'django-insecure-xkpyfo8&mu9n77ztw^o$co(j_b-!4m%6c($w#4n_n#q5=1m62h'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# ПРЕДУПРЕЖДЕНИЕ О БЕЗОПАСНОСТИ: не работайте с включенной отладкой в production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
-# Application definition
-
+# Приложения
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -82,9 +78,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'twim_skill_site.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
+# Базы данных
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -92,6 +86,7 @@ DATABASES = {
     }
 }
 
+# Авторизация
 AUTHENTICATION_BACKENDS = [
     # Необходим для входа по имени пользователя в админку Django, независимо от `allauth`.
     'django.contrib.auth.backends.ModelBackend',
@@ -99,9 +94,10 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+# Редирект после авторизации
 LOGIN_REDIRECT_URL = '/'
 
-# Password validation
+# Валидаторы паролей
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
