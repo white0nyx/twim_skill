@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import logging
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -145,4 +146,42 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': 'CDD932634458CE3798904E2D4BD40223'
         }
     }
+}
+
+# Уровни логирования
+# CRITICAL
+# ERROR
+# WARNING
+# INFO
+# DEBUG
+
+# Настройки логирования
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'myformatter': {
+            'format': '{asctime} | {levelname} | {filename} | {funcName} | {thread:d} | {message}',
+            'style': '{'
+        }
+    },
+
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'sites_logs.log',
+            'formatter': 'myformatter'
+
+        }
+    },
+
+    'loggers': {
+        'main': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        }
+    },
 }

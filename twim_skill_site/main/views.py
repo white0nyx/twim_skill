@@ -3,6 +3,9 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
 import requests
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_all_user_data(request: WSGIRequest):
@@ -12,14 +15,15 @@ def get_all_user_data(request: WSGIRequest):
     faceit_user_data = None
 
     if request.user.is_authenticated and not request.user.is_superuser:
-
         # Получение данных Steam
         steam_user_data = SocialAccount.objects.filter(user=request.user)[0]
         user_steam_id = steam_user_data.extra_data.get('steamid')
 
         # Получение данных FaceIT
         request_for_faceit_data = 'https://api.faceit.com/search/v1/?limit=3&query=' + user_steam_id
-        faceit_user_data = requests.get(request_for_faceit_data).json().get('payload', {}).get('players', {}).get('results')
+        faceit_data = requests.get(request_for_faceit_data).json()
+        faceit_user_data = faceit_data.get('payload', {}).get('players', {}).get('results')
+        logger.info(f'user_steam_id={user_steam_id} | faceit_user_data = {faceit_user_data}')
         faceit_user_data = faceit_user_data[0] if faceit_user_data else None
 
     return {'steam_user_data': steam_user_data, 'faceit_user_data': faceit_user_data}
@@ -37,7 +41,6 @@ class MainPage(ListView):
 
 class ProfilePage(DetailView):
     """Класс представления страницы профиля пользователя"""
-
     def get(self, request: WSGIRequest, *args, **kwargs):
         """Обработка get-запроса"""
 
