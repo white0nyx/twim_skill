@@ -35,5 +35,8 @@ guid: {{ faceit_user_data.guid }}<br>
 <h1>Профиль FaceIt не обнаружен</h1>
 {% endif %}
 <a href="{% url 'account_logout' %}">Выйти</a> | <a href="/">На главную</a>
+
+<a href="{% url 'create_lobby' %}" class="create-lobby-button">Создать лобби</a>
+
 </body>
 </html>

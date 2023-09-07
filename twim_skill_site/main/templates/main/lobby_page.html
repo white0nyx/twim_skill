@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="post" action="{% url 'create_lobby' %}">
+  {% csrf_token %}
+  <label for="map">Map:</label>
+  <input type="text" id="map" name="map" required><br>
+
+  <label for="bet">Bet:</label>
+  <input type="number" id="bet" name="bet" value="500"><br>
+
+  <label for="password_lobby">Password:</label>
+  <input type="number" id="password_lobby" name="password_lobby" value="123"><br>
+
+  <label for="max_lvl_enter">Max Level Enter:</label>
+  <input type="number" id="max_lvl_enter" name="max_lvl_enter" value="3"><br>
+
+  <input type="submit" value="Create Lobby">
+</form>
+</body>
+</html>

@@ -1,7 +1,14 @@
 from allauth.socialaccount.models import SocialAccount
+from django.contrib.auth import user_logged_in
 from django.core.handlers.wsgi import WSGIRequest
+from django.dispatch import receiver
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.views import View
+from django.utils import timezone
 from django.views.generic import ListView, DetailView
+from main.models import *
+
 import requests
 import logging
 
@@ -27,7 +34,6 @@ def get_all_user_data(request: WSGIRequest):
         faceit_user_data = faceit_user_data[0] if faceit_user_data else None
 
     return {'steam_user_data': steam_user_data, 'faceit_user_data': faceit_user_data}
-
 
 class MainPage(ListView):
     """Класс представления главной страницы"""
@@ -56,3 +62,42 @@ class ProfilePage(DetailView):
         context = {}
         context.update(get_all_user_data(request))
         return render(request, 'main/profile.html', context)
+
+@receiver(user_logged_in)
+def create_user_profile(sender, request, user, **kwargs):
+    if user.socialaccount_set.filter(provider='steam').exists():
+        steam_user_data = user.socialaccount_set.get(provider='steam')
+        steam_user_extra_data = steam_user_data.extra_data
+
+        if not User.objects.filter(nickname=user.username).exists():
+            User.objects.create(
+                nickname=steam_user_extra_data.get('personaname'),
+                id_role=1,
+                registration_date=timezone.now().date(),
+                last_enter_date=timezone.now(),
+                steam_url=steam_user_extra_data.get('profileurl'),
+                faciet_url=steam_user_extra_data.get('profileurl'),
+            )
+
+class CreateLobby(View):
+    def get(self, request):
+        return render(request, 'main/lobby_page.html')
+
+    def post(self, request):
+        # Обработка POST-запроса и создание записи в базе данных
+        if request.user.is_authenticated:
+            user_id = request.user.id
+            map = request.POST.get('map', 'Dust2')
+            bet = request.POST.get('bet', 500)
+            password_lobby = request.POST.get('password_lobby', 123)
+            max_lvl_enter = request.POST.get('max_lvl_enter', 3)
+
+            Lobby.objects.create(
+                id_leader=user_id,
+                map=map,
+                bet=bet,
+                password_lobby=password_lobby,
+                max_lvl_enter=max_lvl_enter,
+                deleted=False
+            )
+            return render(request, 'main/success_lobby.html')
