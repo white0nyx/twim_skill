@@ -21,13 +21,14 @@ from allauth.socialaccount import providers
 from django.contrib import admin
 from django.urls import path, include, re_path
 
-from main.views import MainPage, ProfilePage, CreateLobby
+from main.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', MainPage.as_view(), name='main'),
     path('profile/', ProfilePage.as_view(), name='profile'),
-    path('lobby_page/', CreateLobby.as_view(), name='create_lobby'),
+    path('create_lobby/', CreateLobby.as_view(), name='create_lobby'),
+    path('detail_lobby/<slug:slug>/', DetailLobby.as_view(), name='detail_lobby'),
     path("logout/", views.logout, name="account_logout")
 ]
 

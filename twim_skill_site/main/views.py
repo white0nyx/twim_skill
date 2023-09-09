@@ -4,6 +4,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.dispatch import receiver
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.template.defaultfilters import slugify
 from django.views import View
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
@@ -79,25 +80,35 @@ def create_user_profile(sender, request, user, **kwargs):
                 faciet_url=steam_user_extra_data.get('profileurl'),
             )
 
+
+
 class CreateLobby(View):
     def get(self, request):
-        return render(request, 'main/lobby_page.html')
-
+        return render(request, 'main/create_lobby.html')
     def post(self, request):
-        # Обработка POST-запроса и создание записи в базе данных
         if request.user.is_authenticated:
             user_id = request.user.id
             map = request.POST.get('map', 'Dust2')
             bet = request.POST.get('bet', 500)
             password_lobby = request.POST.get('password_lobby', 123)
             max_lvl_enter = request.POST.get('max_lvl_enter', 3)
+            slug = slugify(f"{map}-{user_id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
 
-            Lobby.objects.create(
+            lobby = Lobby.objects.create(
                 id_leader=user_id,
                 map=map,
                 bet=bet,
                 password_lobby=password_lobby,
                 max_lvl_enter=max_lvl_enter,
-                deleted=False
+                deleted=False,
+                slug=slug
             )
-            return render(request, 'main/success_lobby.html')
+
+            return redirect('detail_lobby', slug=slug)
+
+class DetailLobby(View):
+    def get(self, request, slug):
+        lobby = Lobby.objects.get(slug=slug)
+
+        return render(request, 'main/detail_lobby.html', {'lobby': lobby})
+
