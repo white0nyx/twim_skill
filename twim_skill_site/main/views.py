@@ -64,21 +64,22 @@ class ProfilePage(DetailView):
         context.update(get_all_user_data(request))
         return render(request, 'main/profile.html', context)
 
-@receiver(user_logged_in)
-def create_user_profile(sender, request, user, **kwargs):
-    if user.socialaccount_set.filter(provider='steam').exists():
-        steam_user_data = user.socialaccount_set.get(provider='steam')
-        steam_user_extra_data = steam_user_data.extra_data
 
-        if not User.objects.filter(nickname=user.username).exists():
-            User.objects.create(
-                nickname=steam_user_extra_data.get('personaname'),
-                id_role=1,
-                registration_date=timezone.now().date(),
-                last_enter_date=timezone.now(),
-                steam_url=steam_user_extra_data.get('profileurl'),
-                faciet_url=steam_user_extra_data.get('profileurl'),
-            )
+# @receiver(user_logged_in)
+# def create_user_profile(sender, request, user, **kwargs):
+#     if user.socialaccount_set.filter(provider='steam').exists():
+#         steam_user_data = user.socialaccount_set.get(provider='steam')
+#         steam_user_extra_data = steam_user_data.extra_data
+#
+#         if not User.objects.filter(nickname=user.username).exists():
+#             User.objects.create(
+#                 nickname=steam_user_extra_data.get('personaname'),
+#                 id_role=1,
+#                 registration_date=timezone.now().date(),
+#                 last_enter_date=timezone.now(),
+#                 steam_url=steam_user_extra_data.get('profileurl'),
+#                 faciet_url=steam_user_extra_data.get('profileurl'),
+#             )
 
 
 
@@ -90,7 +91,7 @@ class CreateLobby(View):
             user_id = request.user.id
             map = request.POST.get('map', 'Dust2')
             bet = request.POST.get('bet', 500)
-            password_lobby = request.POST.get('password_lobby', 123)
+            password_lobby = request.POST.get('password_lobby', '')
             max_lvl_enter = request.POST.get('max_lvl_enter', 3)
             slug = slugify(f"{map}-{user_id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
 
@@ -104,11 +105,23 @@ class CreateLobby(View):
                 slug=slug
             )
 
+            player_lobby = PlayersLobby.objects.create(
+                id_lobby=lobby,
+                id_user=request.user.id,
+                team_id=1,
+                in_lobby=True
+            )
+
             return redirect('detail_lobby', slug=slug)
 
 class DetailLobby(View):
     def get(self, request, slug):
         lobby = Lobby.objects.get(slug=slug)
+        players_in_lobby = PlayersLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
 
-        return render(request, 'main/detail_lobby.html', {'lobby': lobby})
+        return render(request, 'main/detail_lobby.html', {'lobby': lobby, 'players_in_lobby': players_in_lobby})
+
+
+def leave_f_lobby(request):
+    pass
 

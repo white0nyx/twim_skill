@@ -5,6 +5,18 @@
     <title>Title</title>
 </head>
 <body>
-Успешное создание лобби
+<h1> Успешное создание лобби </h1>
+ <h1>Детали лобби</h1>
+
+    <p>Название лобби: {{ lobby.map }}</p>
+    <p>Ставка: {{ lobby.bet }}</p>
+    <p>Пароль для лобби: {{ lobby.password_lobby }}</p>
+    <p>Максимальный уровень для входа: {{ lobby.max_lvl_enter }}</p>
+
+    <p>Количество игроков в лобби: {{ players_in_lobby }}</p>
+
+
+<a href="{% url 'leave_f_lobby' %}" class="create-lobby-button">Выйти с лобби</a>
+
 </body>
 </html>

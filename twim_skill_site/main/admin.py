@@ -1,9 +1,9 @@
 from django.contrib import admin
 from .models import *
 
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','nickname', 'id_role', 'registration_date', 'last_enter_date', 'steam_url', 'faciet_url')
+# @admin.register(User)
+# class UserAdmin(admin.ModelAdmin):
+#     list_display = ('id','nickname', 'id_role', 'registration_date', 'last_enter_date', 'steam_url', 'faciet_url')
 
 
 @admin.register(Lobby)
@@ -17,3 +17,6 @@ class PlayersLobbyAdmin(admin.ModelAdmin):
     list_display = ('id_lobby', 'id_user', 'team_id', 'in_lobby')
     list_filter = ('team_id', 'in_lobby')
     search_fields = ('id_lobby__slug', 'id_user__nickname')
+
+class PlayersLobby(admin.ModelAdmin):
+    list_display = ('id_lobby', 'id_user', 'team_id', 'in_lobby')

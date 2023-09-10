@@ -28,9 +28,11 @@ urlpatterns = [
     path('', MainPage.as_view(), name='main'),
     path('profile/', ProfilePage.as_view(), name='profile'),
     path('create_lobby/', CreateLobby.as_view(), name='create_lobby'),
+    path('leave_f_lobby/', leave_f_lobby, name='leave_f_lobby'),
     path('detail_lobby/<slug:slug>/', DetailLobby.as_view(), name='detail_lobby'),
     path("logout/", views.logout, name="account_logout")
 ]
+
 
 # URL для социальных сетей. В частности Steam.
 if app_settings.SOCIALACCOUNT_ENABLED:
