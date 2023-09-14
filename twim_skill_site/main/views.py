@@ -42,6 +42,18 @@ class MainPage(ListView):
     def get(self, request, *args, **kwargs):
         """Обработка get-запроса"""
         context = {}
+        user_in_lobby = False
+        context.update(get_all_user_data(request))
+
+        if request.user.is_authenticated and not request.user.is_superuser:
+            user_in_lobby = PlayersLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
+
+            if user_in_lobby:
+                user_lobby = PlayersLobby.objects.get(id_user=request.user.id, in_lobby=True)
+                lobby_slug = user_lobby.id_lobby.slug
+                context['user_lobby_slug'] = lobby_slug
+
+        context['user_in_lobby'] = user_in_lobby
         context.update(get_all_user_data(request))
         return render(request, 'main/main.html', context)
 
@@ -123,5 +135,21 @@ class DetailLobby(View):
 
 
 def leave_f_lobby(request):
-    pass
+    if request.user.is_authenticated:
+        user_id = request.user.id
+        # Определяем в каком лобби пользователь
+        player_lobby = PlayersLobby.objects.get(id_user=user_id, in_lobby=True)
+        # Проверка на то, сколько игроков в лобби
+        players_in_lobby = PlayersLobby.objects.filter(id_lobby=player_lobby.id_lobby, in_lobby=True).count()
 
+        if players_in_lobby <= 1:
+            lobby_to_delete = player_lobby.id_lobby
+            player_lobby.delete()
+
+            lobby_to_delete.delete()
+
+        else:
+            player_lobby.in_lobby = False
+            player_lobby.save()
+
+        return redirect('main')

@@ -34,6 +34,7 @@ urlpatterns = [
 ]
 
 
+
 # URL для социальных сетей. В частности Steam.
 if app_settings.SOCIALACCOUNT_ENABLED:
     urlpatterns += [path("social/", include("allauth.socialaccount.urls"))]

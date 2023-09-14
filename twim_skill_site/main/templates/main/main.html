@@ -6,6 +6,9 @@
 </head>
 <body>
 <div id="header">
+    {% if user_in_lobby %}
+    <a href="{% url 'detail_lobby' slug=user_lobby_slug %}" class="return-to-lobby-button">Вернуться к лобби</a>
+    {% endif %}
     {% if user.is_authenticated %}
     <p>facietlvl: {% if faceit_user_data %} {{ faceit_user_data.games.0.skill_level }} {% else %} НЕТ ДАННЫХ {% endif %}, twim coin: НЕТ ДАННЫХ, twim-lvl: НЕТ ДАННЫХ</p>
     <a href="/profile">Профиль</a>
