@@ -36,7 +36,11 @@ guid: {{ faceit_user_data.guid }}<br>
 {% endif %}
 <a href="{% url 'account_logout' %}">Выйти</a> | <a href="/">На главную</a>
 
+{% if user_in_lobby %}
+<a href="{% url 'detail_lobby' slug=user_lobby_slug %}" class="return-to-lobby-button">Вернуться к лобби</a>
+{% else %}
 <a href="{% url 'create_lobby' %}" class="create-lobby-button">Создать лобби</a>
+{% endif %}
 
 </body>
 </html>

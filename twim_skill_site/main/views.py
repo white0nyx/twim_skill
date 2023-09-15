@@ -1,4 +1,5 @@
 from allauth.socialaccount.models import SocialAccount
+from django.contrib import messages
 from django.contrib.auth import user_logged_in
 from django.core.handlers.wsgi import WSGIRequest
 from django.dispatch import receiver
@@ -36,25 +37,29 @@ def get_all_user_data(request: WSGIRequest):
 
     return {'steam_user_data': steam_user_data, 'faceit_user_data': faceit_user_data}
 
+class UserInLobby(View):
+    @staticmethod
+    def get_user_data(request):
+        user_data = {}
+        user_data['user_in_lobby'] = False
+
+        if request.user.is_authenticated and not request.user.is_superuser:
+            user_data['user_in_lobby'] = PlayersLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
+
+            if user_data['user_in_lobby']:
+                user_lobby = PlayersLobby.objects.get(id_user=request.user.id, in_lobby=True)
+                user_data['user_lobby_slug'] = user_lobby.id_lobby.slug
+
+        user_data.update(get_all_user_data(request))
+        return user_data
+
 class MainPage(ListView):
     """Класс представления главной страницы"""
 
     def get(self, request, *args, **kwargs):
         """Обработка get-запроса"""
-        context = {}
-        user_in_lobby = False
-        context.update(get_all_user_data(request))
 
-        if request.user.is_authenticated and not request.user.is_superuser:
-            user_in_lobby = PlayersLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
-
-            if user_in_lobby:
-                user_lobby = PlayersLobby.objects.get(id_user=request.user.id, in_lobby=True)
-                lobby_slug = user_lobby.id_lobby.slug
-                context['user_lobby_slug'] = lobby_slug
-
-        context['user_in_lobby'] = user_in_lobby
-        context.update(get_all_user_data(request))
+        context = UserInLobby.get_user_data(request)
         return render(request, 'main/main.html', context)
 
 
@@ -72,8 +77,7 @@ class ProfilePage(DetailView):
         if not request.user.is_authenticated:
             return redirect('main')
 
-        context = {}
-        context.update(get_all_user_data(request))
+        context = UserInLobby.get_user_data(request)
         return render(request, 'main/profile.html', context)
 
 
@@ -130,8 +134,10 @@ class DetailLobby(View):
     def get(self, request, slug):
         lobby = Lobby.objects.get(slug=slug)
         players_in_lobby = PlayersLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
+        context = UserInLobby.get_user_data(request)
+        print(context)
 
-        return render(request, 'main/detail_lobby.html', {'lobby': lobby, 'players_in_lobby': players_in_lobby})
+        return render(request, 'main/detail_lobby.html', {'lobby': lobby, 'players_in_lobby': players_in_lobby, 'context': context})
 
 
 def leave_f_lobby(request):
@@ -153,3 +159,28 @@ def leave_f_lobby(request):
             player_lobby.save()
 
         return redirect('main')
+
+
+class JoinLobby(View):
+    def get(self, request, slug):
+        if request.user.is_authenticated:
+            user_in_lobby = PlayersLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
+
+            if not user_in_lobby:
+                try:
+                    lobby = Lobby.objects.get(slug=slug)
+                    player_lobby = PlayersLobby.objects.create(
+                        id_lobby=lobby,
+                        id_user=request.user.id,
+                        team_id=1,
+                        in_lobby=True
+                    )
+
+                    return redirect('detail_lobby', slug=slug)
+                except Lobby.DoesNotExist:
+                    messages.error(request, 'Лобби с указанным slug не найдено.')
+                    pass
+
+                return redirect('detail_lobby', slug=slug)  # Возвращаем пользователя на страницу лобби
+            else:
+                return redirect('main')
