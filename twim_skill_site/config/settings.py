@@ -45,7 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+
+    # Наши приложения
     'main.apps.MainConfig',
+    'users.apps.UsersConfig',
 
     # Авторизация
     'allauth',
@@ -197,3 +200,7 @@ LOGGING = {
         }
     },
 }
+
+# Используемая модель пользователя
+AUTH_USER_MODEL = 'users.User'
+
