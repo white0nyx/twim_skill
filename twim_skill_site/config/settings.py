@@ -45,7 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+
+    # Наши приложения
     'main.apps.MainConfig',
+    'users.apps.UsersConfig',
 
     # Авторизация
     'allauth',
@@ -64,7 +67,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'twim_skill_site.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -82,7 +85,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'twim_skill_site.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 # Базы данных
 DATABASES = {
@@ -197,3 +200,7 @@ LOGGING = {
         }
     },
 }
+
+# Используемая модель пользователя
+AUTH_USER_MODEL = 'users.User'
+
