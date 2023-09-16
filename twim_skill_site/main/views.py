@@ -14,6 +14,9 @@ from main.models import *
 import requests
 import logging
 
+from main.services import get_player_lobby, get_count_players_in_lobby, leave_lobby_with_delete, \
+    leave_lobby
+
 logger = logging.getLogger(__name__)
 
 
@@ -37,6 +40,7 @@ def get_all_user_data(request: WSGIRequest):
 
     return {'steam_user_data': steam_user_data, 'faceit_user_data': faceit_user_data}
 
+
 class UserInLobby(View):
     @staticmethod
     def get_user_data(request):
@@ -52,6 +56,7 @@ class UserInLobby(View):
 
         user_data.update(get_all_user_data(request))
         return user_data
+
 
 class MainPage(ListView):
     """Класс представления главной страницы"""
@@ -98,10 +103,10 @@ class ProfilePage(DetailView):
 #             )
 
 
-
 class CreateLobby(View):
     def get(self, request):
         return render(request, 'main/create_lobby.html')
+
     def post(self, request):
         if request.user.is_authenticated:
             user_id = request.user.id
@@ -130,6 +135,7 @@ class CreateLobby(View):
 
             return redirect('detail_lobby', slug=slug)
 
+
 class DetailLobby(View):
     def get(self, request, slug):
         lobby = Lobby.objects.get(slug=slug)
@@ -137,26 +143,22 @@ class DetailLobby(View):
         context = UserInLobby.get_user_data(request)
         print(context)
 
-        return render(request, 'main/detail_lobby.html', {'lobby': lobby, 'players_in_lobby': players_in_lobby, 'context': context})
+        return render(request, 'main/detail_lobby.html',
+                      {'lobby': lobby, 'players_in_lobby': players_in_lobby, 'context': context})
 
 
 def leave_f_lobby(request):
+    """Покинуть лобби"""
     if request.user.is_authenticated:
-        user_id = request.user.id
+
         # Определяем в каком лобби пользователь
-        player_lobby = PlayersLobby.objects.get(id_user=user_id, in_lobby=True)
-        # Проверка на то, сколько игроков в лобби
-        players_in_lobby = PlayersLobby.objects.filter(id_lobby=player_lobby.id_lobby, in_lobby=True).count()
+        lobby = get_player_lobby(request.user.id)
 
-        if players_in_lobby <= 1:
-            lobby_to_delete = player_lobby.id_lobby
-            player_lobby.delete()
-
-            lobby_to_delete.delete()
+        if get_count_players_in_lobby(lobby) <= 1:
+            leave_lobby_with_delete(lobby)
 
         else:
-            player_lobby.in_lobby = False
-            player_lobby.save()
+            leave_lobby(lobby)
 
         return redirect('main')
 
