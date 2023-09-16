@@ -7,7 +7,6 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.conf import settings
 
-from twim_skill_site import settings
 
 
 # class User(models.Model):
