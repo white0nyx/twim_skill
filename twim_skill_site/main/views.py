@@ -1,13 +1,8 @@
 from allauth.socialaccount.models import SocialAccount
 from django.contrib import messages
-from django.contrib.auth import user_logged_in
 from django.core.handlers.wsgi import WSGIRequest
-from django.dispatch import receiver
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.template.defaultfilters import slugify
 from django.views import View
-from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from main.models import *
 
@@ -48,10 +43,10 @@ class UserInLobby(View):
         user_data['user_in_lobby'] = False
 
         if request.user.is_authenticated and not request.user.is_superuser:
-            user_data['user_in_lobby'] = PlayersLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
+            user_data['user_in_lobby'] = PlayerLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
 
             if user_data['user_in_lobby']:
-                user_lobby = PlayersLobby.objects.get(id_user=request.user.id, in_lobby=True)
+                user_lobby = PlayerLobby.objects.get(id_user=request.user.id, in_lobby=True)
                 user_data['user_lobby_slug'] = user_lobby.id_lobby.slug
 
         user_data.update(get_all_user_data(request))
@@ -86,23 +81,6 @@ class ProfilePage(DetailView):
         return render(request, 'main/profile.html', context)
 
 
-# @receiver(user_logged_in)
-# def create_user_profile(sender, request, user, **kwargs):
-#     if user.socialaccount_set.filter(provider='steam').exists():
-#         steam_user_data = user.socialaccount_set.get(provider='steam')
-#         steam_user_extra_data = steam_user_data.extra_data
-#
-#         if not User.objects.filter(nickname=user.username).exists():
-#             User.objects.create(
-#                 nickname=steam_user_extra_data.get('personaname'),
-#                 id_role=1,
-#                 registration_date=timezone.now().date(),
-#                 last_enter_date=timezone.now(),
-#                 steam_url=steam_user_extra_data.get('profileurl'),
-#                 faciet_url=steam_user_extra_data.get('profileurl'),
-#             )
-
-
 class CreateLobby(View):
     def get(self, request):
         return render(request, 'main/create_lobby.html')
@@ -126,7 +104,7 @@ class CreateLobby(View):
                 slug=slug
             )
 
-            player_lobby = PlayersLobby.objects.create(
+            player_lobby = PlayerLobby.objects.create(
                 id_lobby=lobby,
                 id_user=request.user.id,
                 team_id=1,
@@ -139,7 +117,7 @@ class CreateLobby(View):
 class DetailLobby(View):
     def get(self, request, slug):
         lobby = Lobby.objects.get(slug=slug)
-        players_in_lobby = PlayersLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
+        players_in_lobby = PlayerLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
         context = UserInLobby.get_user_data(request)
         print(context)
 
@@ -165,12 +143,12 @@ def leave_f_lobby(request):
 class JoinLobby(View):
     def get(self, request, slug):
         if request.user.is_authenticated:
-            user_in_lobby = PlayersLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
+            user_in_lobby = PlayerLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
 
             if not user_in_lobby:
                 try:
                     lobby = Lobby.objects.get(slug=slug)
-                    player_lobby = PlayersLobby.objects.create(
+                    player_lobby = PlayerLobby.objects.create(
                         id_lobby=lobby,
                         id_user=request.user.id,
                         team_id=1,
@@ -185,4 +163,3 @@ class JoinLobby(View):
                 return redirect('detail_lobby', slug=slug)  # Возвращаем пользователя на страницу лобби
             else:
                 return redirect('main')
-
