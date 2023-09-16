@@ -32,7 +32,7 @@ class Lobby(models.Model):
             self.slug = slugify(f"{self.map}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
         super(Lobby, self).save(*args, **kwargs)
 
-class PlayersLobby(models.Model):
+class PlayerLobby(models.Model):
     id_lobby = models.ForeignKey(Lobby, on_delete=models.CASCADE, related_name='players')
     id_user = models.IntegerField()
     team_id = models.IntegerField()

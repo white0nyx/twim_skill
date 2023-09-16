@@ -12,7 +12,7 @@ class LobbyAdmin(admin.ModelAdmin):
     list_filter = ('deleted',)
     search_fields = ('id_leader', 'map')
 
-@admin.register(PlayersLobby)
+@admin.register(PlayerLobby)
 class PlayersLobbyAdmin(admin.ModelAdmin):
     list_display = ('id_lobby', 'id_user', 'team_id', 'in_lobby')
     list_filter = ('team_id', 'in_lobby')

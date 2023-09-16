@@ -156,7 +156,6 @@ def leave_f_lobby(request):
 
         if get_count_players_in_lobby(lobby) <= 1:
             leave_lobby_with_delete(lobby)
-
         else:
             leave_lobby(lobby)
 
@@ -186,3 +185,4 @@ class JoinLobby(View):
                 return redirect('detail_lobby', slug=slug)  # Возвращаем пользователя на страницу лобби
             else:
                 return redirect('main')
+
