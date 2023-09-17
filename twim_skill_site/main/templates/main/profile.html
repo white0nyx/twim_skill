@@ -5,14 +5,19 @@
     <title>Мой аккаунт</title>
 </head>
 <body>
+
+{% with steam_user_data=user_data.steam_user_data %}
 <h1>Данные вашего аккаунта Steam:</h1>
 <img src="{{ steam_user_data.extra_data.avatarfull}}">
 <br>
 Никнейм: {{steam_user_data.extra_data.personaname}}
 <br>
-<a href="{{steam_user_data.extra_data.profileurl}}">Ссылка на профиль</a>
+<a href="{{ steam_user_data.extra_data.profileurl}}">Ссылка на профиль</a>
 <br>
 <br>
+{% endwith %}
+
+{% with faceit_user_data=user_data.faceit_user_data %}
 {% if faceit_user_data %}
 <h1>Данные вашего аккаунта FaceIT</h1>
 <img src="{{ faceit_user_data.avatar}}"><br>
@@ -35,9 +40,10 @@ guid: {{ faceit_user_data.guid }}<br>
 <h1>Профиль FaceIt не обнаружен</h1>
 {% endif %}
 <a href="{% url 'account_logout' %}">Выйти</a> | <a href="/">На главную</a>
+{% endwith %}
 
-{% if user_in_lobby %}
-<a href="{% url 'detail_lobby' slug=user_lobby_slug %}" class="return-to-lobby-button">Вернуться к лобби</a>
+{% if user_lobby_data.user_in_lobby %}
+<a href="{% url 'detail_lobby' slug=user_lobby_data.user_lobby_slug %}" class="return-to-lobby-button">Вернуться к лобби</a>
 {% else %}
 <a href="{% url 'create_lobby' %}" class="create-lobby-button">Создать лобби</a>
 {% endif %}

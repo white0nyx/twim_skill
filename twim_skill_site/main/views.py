@@ -6,82 +6,50 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 from main.models import *
 
-import requests
-import logging
-
-from main.services import get_player_lobby, get_count_players_in_lobby, leave_lobby_with_delete, \
-    leave_lobby
-
-logger = logging.getLogger(__name__)
-
-
-def get_all_user_data(request: WSGIRequest):
-    """Формирование всех данных пользователя"""
-
-    steam_user_data = None
-    faceit_user_data = None
-
-    if request.user.is_authenticated and not request.user.is_superuser:
-        # Получение данных Steam
-        steam_user_data = SocialAccount.objects.filter(user=request.user)[0]
-        user_steam_id = steam_user_data.extra_data.get('steamid')
-
-        # Получение данных FaceIT
-        request_for_faceit_data = 'https://api.faceit.com/search/v1/?limit=3&query=' + user_steam_id
-        faceit_data = requests.get(request_for_faceit_data).json()
-        faceit_user_data = faceit_data.get('payload', {}).get('players', {}).get('results')
-        logger.info(f'user_steam_id={user_steam_id} | faceit_user_data = {faceit_user_data}')
-        faceit_user_data = faceit_user_data[0] if faceit_user_data else None
-
-    return {'steam_user_data': steam_user_data, 'faceit_user_data': faceit_user_data}
-
-
-class UserInLobby(View):
-    @staticmethod
-    def get_user_data(request):
-        user_data = {}
-        user_data['user_in_lobby'] = False
-
-        if request.user.is_authenticated and not request.user.is_superuser:
-            user_data['user_in_lobby'] = PlayerLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
-
-            if user_data['user_in_lobby']:
-                user_lobby = PlayerLobby.objects.get(id_user=request.user.id, in_lobby=True)
-                user_data['user_lobby_slug'] = user_lobby.id_lobby.slug
-
-        user_data.update(get_all_user_data(request))
-        return user_data
+from main.services import get_player_lobby, get_count_players_in_lobby, leave_lobby_with_delete, leave_lobby, \
+    get_user_lobby_data, get_steam_faceit_user_data, get_lobby_by_slug
 
 
 class MainPage(ListView):
-    """Класс представления главной страницы"""
+    """Главная страницы"""
 
     def get(self, request, *args, **kwargs):
         """Обработка get-запроса"""
-
-        context = UserInLobby.get_user_data(request)
+        user = request.user
+        context = {
+            'user_data': get_steam_faceit_user_data(user),
+            'user_lobby_data': get_user_lobby_data(user),
+        }
         return render(request, 'main/main.html', context)
 
 
 class ProfilePage(DetailView):
-    """Класс представления страницы профиля пользователя"""
+    """Страница профиля пользователя"""
 
     def get(self, request: WSGIRequest, *args, **kwargs):
         """Обработка get-запроса"""
 
+        user = request.user
+
         # Редирект для администраторов
-        if request.user.is_superuser:
+        if user.is_superuser:
             return render(request, 'main/admin_profile.html')
 
         # Редирект на главную, если пользователь не авторизован
-        if not request.user.is_authenticated:
+        if not user.is_authenticated:
             return redirect('main')
 
-        context = UserInLobby.get_user_data(request)
+        # Получение данных авторизованного пользователя и открытие страницы профиля
+        context = {
+            'user_data': get_steam_faceit_user_data(user),
+            'user_lobby_data': get_user_lobby_data(user),
+        }
         return render(request, 'main/profile.html', context)
 
 
 class CreateLobby(View):
+    """Страница создания лобби"""
+
     def get(self, request):
         return render(request, 'main/create_lobby.html')
 
@@ -114,15 +82,21 @@ class CreateLobby(View):
             return redirect('detail_lobby', slug=slug)
 
 
-class DetailLobby(View):
+class DetailLobbyPage(View):
+    """Страница с деталями лобби"""
     def get(self, request, slug):
         lobby = Lobby.objects.get(slug=slug)
         players_in_lobby = PlayerLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
-        context = UserInLobby.get_user_data(request)
-        print(context)
 
-        return render(request, 'main/detail_lobby.html',
-                      {'lobby': lobby, 'players_in_lobby': players_in_lobby, 'context': context})
+        user = request.user
+        context = {
+            'lobby': lobby,
+            'players_in_lobby': players_in_lobby,
+            'user_data': get_steam_faceit_user_data(user),
+            'user_lobby_data': get_user_lobby_data(user)
+        }
+
+        return render(request, 'main/detail_lobby.html', context)
 
 
 def leave_f_lobby(request):
