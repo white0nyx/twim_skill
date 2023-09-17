@@ -1,14 +1,8 @@
 import requests
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.models import AbstractUser
-from django.core.handlers.wsgi import WSGIRequest
-from django.db.models import Manager
-from django.utils.functional import SimpleLazyObject
 
 from main.models import PlayerLobby, Lobby
-
-from main.models import PlayerLobby
-from users.models import User
 
 import logging
 
@@ -42,7 +36,7 @@ def get_user_lobby_data(user: AbstractUser) -> dict:
     user_data = {'user_in_lobby': False}
     if user.is_authenticated and not user.is_superuser:
 
-        user_lobby = get_player_lobby(user.pk)
+        user_lobby = get_player_lobby(user)
         user_data['user_in_lobby'] = user_lobby
 
         if user_lobby:
@@ -57,9 +51,10 @@ def get_lobby_by_slug(slug: str):
     return lobby[0] if lobby else None
 
 
-def get_player_lobby(user_id: int) -> PlayerLobby | None:
+def get_player_lobby(user: AbstractUser) -> PlayerLobby | None:
     """Получить лобби, в котором находится пользователь"""
-    player_lobby = PlayerLobby.objects.filter(id_user=user_id, in_lobby=True)
+
+    player_lobby = PlayerLobby.objects.filter(id_user=user.pk, in_lobby=True)
     return player_lobby[0] if player_lobby else None
 
 

@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.core.handlers.wsgi import WSGIRequest
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView
@@ -10,7 +12,7 @@ from main.services import *
 class MainPage(ListView):
     """Главная страницы"""
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs) -> HttpResponse:
         """Обработка get-запроса"""
         user = request.user
         context = {
@@ -23,7 +25,7 @@ class MainPage(ListView):
 class ProfilePage(DetailView):
     """Страница профиля пользователя"""
 
-    def get(self, request: WSGIRequest, *args, **kwargs):
+    def get(self, request: WSGIRequest, *args, **kwargs) -> HttpResponse | HttpResponseRedirect:
         """Обработка get-запроса"""
 
         user = request.user
@@ -41,6 +43,7 @@ class ProfilePage(DetailView):
             'user_data': get_steam_faceit_user_data(user),
             'user_lobby_data': get_user_lobby_data(user),
         }
+
         return render(request, 'main/profile.html', context)
 
 
@@ -51,7 +54,7 @@ class CreateLobbyPage(View):
         """Обработчик get-запроса"""
         return render(request, 'main/create_lobby.html')
 
-    def post(self, request):
+    def post(self, request) -> HttpResponseRedirect:
         """Обработчик post-запроса создания лобби"""
         if request.user.is_authenticated:
             user_id = request.user.id
@@ -84,7 +87,7 @@ class CreateLobbyPage(View):
 class DetailLobbyPage(View):
     """Страница с деталями лобби"""
 
-    def get(self, request, slug):
+    def get(self, request: WSGIRequest, slug: str) -> HttpResponse:
         lobby = Lobby.objects.get(slug=slug)
         count_players_in_lobby = PlayerLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
 
@@ -99,12 +102,14 @@ class DetailLobbyPage(View):
         return render(request, 'main/detail_lobby.html', context)
 
 
-def leave_f_lobby(request):
+def leave_f_lobby(request: WSGIRequest) -> HttpResponse:
     """Покинуть лобби"""
-    if request.user.is_authenticated:
+
+    user = request.user
+    if user.is_authenticated:
 
         # Определяем в каком лобби пользователь
-        lobby = get_player_lobby(request.user.id)
+        lobby = get_player_lobby(user)
 
         if get_count_players_in_lobby(lobby) <= 1:
             leave_lobby_with_delete(lobby)
@@ -115,7 +120,10 @@ def leave_f_lobby(request):
 
 
 class JoinLobby(View):
-    def get(self, request, slug):
+    """Присоединение к лобби"""
+
+    def get(self, request: WSGIRequest, slug: str) -> HttpResponse:
+        """Обработка get-запроса"""
         if request.user.is_authenticated:
             user_in_lobby = PlayerLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
 
