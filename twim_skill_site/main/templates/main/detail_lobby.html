@@ -13,10 +13,15 @@
     <p>Пароль для лобби: {{ lobby.password_lobby }}</p>
     <p>Максимальный уровень для входа: {{ lobby.max_lvl_enter }}</p>
 
-    <p>Количество игроков в лобби: {{ players_in_lobby }}</p>
+    <p>Количество игроков в лобби: {{ count_players_in_lobby }}</p>
+
+{% if not user_lobby_data.user_in_lobby  %}
+<a href="{% url 'join_lobby' slug=lobby.slug %}" class="join-lobby-button">Присоединиться к лобби</a>
+{% else  %}
+<a href="{% url 'leave_f_lobby' %}" class="create-lobby-button">Выйти из лобби</a>
+{% endif %}
 
 <a href="/">На главную</a>
-<a href="{% url 'join_lobby' slug=lobby.slug %}" class="join-lobby-button">Присоединиться к лобби</a>
-<a href="{% url 'leave_f_lobby' %}" class="create-lobby-button">Выйти с лобби</a>
+
 </body>
 </html>

@@ -1,17 +1,10 @@
 from django.contrib import messages
-from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView
 from main.models import *
 
-from main.services import get_player_lobby,\
-    get_count_players_in_lobby,\
-    leave_lobby_with_delete,\
-    leave_lobby,\
-    get_user_lobby_data,\
-    get_steam_faceit_user_data,\
-    get_lobby_by_slug
+from main.services import *
 
 
 class MainPage(ListView):
@@ -55,9 +48,11 @@ class CreateLobbyPage(View):
     """Страница создания лобби"""
 
     def get(self, request):
+        """Обработчик get-запроса"""
         return render(request, 'main/create_lobby.html')
 
     def post(self, request):
+        """Обработчик post-запроса создания лобби"""
         if request.user.is_authenticated:
             user_id = request.user.id
             map = request.POST.get('map', 'Dust2')
@@ -76,7 +71,7 @@ class CreateLobbyPage(View):
                 slug=slug
             )
 
-            player_lobby = PlayerLobby.objects.create(
+            PlayerLobby.objects.create(
                 id_lobby=lobby,
                 id_user=request.user.id,
                 team_id=1,
@@ -91,12 +86,12 @@ class DetailLobbyPage(View):
 
     def get(self, request, slug):
         lobby = Lobby.objects.get(slug=slug)
-        players_in_lobby = PlayerLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
+        count_players_in_lobby = PlayerLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
 
         user = request.user
         context = {
             'lobby': lobby,
-            'players_in_lobby': players_in_lobby,
+            'count_players_in_lobby': count_players_in_lobby,
             'user_data': get_steam_faceit_user_data(user),
             'user_lobby_data': get_user_lobby_data(user)
         }
