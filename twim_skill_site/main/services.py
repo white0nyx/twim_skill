@@ -1,13 +1,16 @@
 import requests
-from allauth.socialaccount.models import SocialAccount
+import logging
+
 from django.contrib.auth.models import AbstractUser
+
+from allauth.socialaccount.models import SocialAccount
 
 from main.models import PlayerLobby, Lobby
 
-import logging
-
 logger = logging.getLogger(__name__)
 
+
+# ---------------- ПОЛЬЗОВАТЕЛИ ----------------
 
 def get_steam_faceit_user_data(user: AbstractUser) -> dict:
     """Получить данные пользователя Steam и FaceIt"""
@@ -44,6 +47,8 @@ def get_user_lobby_data(user: AbstractUser) -> dict:
 
     return user_data
 
+
+# ---------------- ЛОББИ ----------------
 
 def get_lobby_by_slug(slug: str) -> Lobby | None:
     """Получить лобби по slug'у"""
