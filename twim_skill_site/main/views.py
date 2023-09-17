@@ -1,4 +1,3 @@
-from allauth.socialaccount.models import SocialAccount
 from django.contrib import messages
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render, redirect
@@ -6,8 +5,13 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 from main.models import *
 
-from main.services import get_player_lobby, get_count_players_in_lobby, leave_lobby_with_delete, leave_lobby, \
-    get_user_lobby_data, get_steam_faceit_user_data, get_lobby_by_slug
+from main.services import get_player_lobby,\
+    get_count_players_in_lobby,\
+    leave_lobby_with_delete,\
+    leave_lobby,\
+    get_user_lobby_data,\
+    get_steam_faceit_user_data,\
+    get_lobby_by_slug
 
 
 class MainPage(ListView):
@@ -47,7 +51,7 @@ class ProfilePage(DetailView):
         return render(request, 'main/profile.html', context)
 
 
-class CreateLobby(View):
+class CreateLobbyPage(View):
     """Страница создания лобби"""
 
     def get(self, request):
@@ -84,6 +88,7 @@ class CreateLobby(View):
 
 class DetailLobbyPage(View):
     """Страница с деталями лобби"""
+
     def get(self, request, slug):
         lobby = Lobby.objects.get(slug=slug)
         players_in_lobby = PlayerLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
@@ -119,21 +124,19 @@ class JoinLobby(View):
         if request.user.is_authenticated:
             user_in_lobby = PlayerLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
 
-            if not user_in_lobby:
-                try:
-                    lobby = Lobby.objects.get(slug=slug)
-                    player_lobby = PlayerLobby.objects.create(
-                        id_lobby=lobby,
-                        id_user=request.user.id,
-                        team_id=1,
-                        in_lobby=True
-                    )
+            if not user_in_lobby and get_lobby_by_slug(slug):
+                PlayerLobby.objects.create(
+                    id_lobby=Lobby.objects.get(slug=slug),
+                    id_user=request.user.id,
+                    team_id=1,
+                    in_lobby=True
+                )
 
-                    return redirect('detail_lobby', slug=slug)
-                except Lobby.DoesNotExist:
-                    messages.error(request, 'Лобби с указанным slug не найдено.')
-                    pass
+                return redirect('detail_lobby', slug=slug)
+            else:
+                messages.error(request, 'Лобби с указанным slug не найдено. Или вы находитесь в лобби')
 
                 return redirect('detail_lobby', slug=slug)  # Возвращаем пользователя на страницу лобби
-            else:
-                return redirect('main')
+
+        else:
+            return redirect('main')
