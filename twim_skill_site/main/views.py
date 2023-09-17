@@ -50,11 +50,13 @@ class ProfilePage(DetailView):
 class CreateLobbyPage(View):
     """Страница создания лобби"""
 
-    def get(self, request) -> HttpResponse:
+    @staticmethod
+    def get(request) -> HttpResponse:
         """Обработчик get-запроса"""
         return render(request, 'main/create_lobby.html')
 
-    def post(self, request) -> HttpResponseRedirect:
+    @staticmethod
+    def post(request) -> HttpResponseRedirect:
         """Обработчик post-запроса создания лобби"""
         if request.user.is_authenticated:
             user_id = request.user.id
@@ -87,7 +89,8 @@ class CreateLobbyPage(View):
 class DetailLobbyPage(View):
     """Страница с деталями лобби"""
 
-    def get(self, request: WSGIRequest, slug: str) -> HttpResponse:
+    @staticmethod
+    def get(request: WSGIRequest, slug: str) -> HttpResponse:
         lobby = Lobby.objects.get(slug=slug)
         count_players_in_lobby = PlayerLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
 
@@ -122,7 +125,8 @@ def leave_f_lobby(request: WSGIRequest) -> HttpResponse:
 class JoinLobby(View):
     """Присоединение к лобби"""
 
-    def get(self, request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
+    @staticmethod
+    def get(request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
         """Обработка get-запроса"""
 
         user = request.user
