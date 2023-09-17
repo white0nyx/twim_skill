@@ -50,7 +50,7 @@ class ProfilePage(DetailView):
 class CreateLobbyPage(View):
     """Страница создания лобби"""
 
-    def get(self, request):
+    def get(self, request) -> HttpResponse:
         """Обработчик get-запроса"""
         return render(request, 'main/create_lobby.html')
 
@@ -58,15 +58,15 @@ class CreateLobbyPage(View):
         """Обработчик post-запроса создания лобби"""
         if request.user.is_authenticated:
             user_id = request.user.id
-            map = request.POST.get('map', 'Dust2')
+            game_map = request.POST.get('map', 'Dust2')
             bet = request.POST.get('bet', 500)
             password_lobby = request.POST.get('password_lobby', '')
             max_lvl_enter = request.POST.get('max_lvl_enter', 3)
-            slug = slugify(f"{map}-{user_id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
+            slug = slugify(f"{game_map}-{user_id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
 
             lobby = Lobby.objects.create(
                 id_leader=user_id,
-                map=map,
+                map=game_map,
                 bet=bet,
                 password_lobby=password_lobby,
                 max_lvl_enter=max_lvl_enter,
@@ -122,24 +122,32 @@ def leave_f_lobby(request: WSGIRequest) -> HttpResponse:
 class JoinLobby(View):
     """Присоединение к лобби"""
 
-    def get(self, request: WSGIRequest, slug: str) -> HttpResponse:
+    def get(self, request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
         """Обработка get-запроса"""
-        if request.user.is_authenticated:
-            user_in_lobby = PlayerLobby.objects.filter(id_user=request.user.id, in_lobby=True).exists()
 
-            if not user_in_lobby and get_lobby_by_slug(slug):
-                PlayerLobby.objects.create(
-                    id_lobby=Lobby.objects.get(slug=slug),
-                    id_user=request.user.id,
-                    team_id=1,
-                    in_lobby=True
-                )
+        user = request.user
 
-                return redirect('detail_lobby', slug=slug)
-            else:
-                messages.error(request, 'Лобби с указанным slug не найдено. Или вы находитесь в лобби')
-
-                return redirect('detail_lobby', slug=slug)  # Возвращаем пользователя на страницу лобби
-
-        else:
+        # Редирект неавторизованного пользователя на главную страницу
+        if not user.is_authenticated:
+            messages.error(request, 'Пройдите авторизацию для присоединения к лобби.')
             return redirect('main')
+
+        # Редирект пользователя, который уже находится в лобби
+        elif get_player_lobby(user):
+            messages.error(request, 'Вы уже находитесь в данном лобби.')
+            return redirect('main')
+
+        # Ошибка slug'а лобби
+        elif not get_lobby_by_slug(slug):
+            messages.error(request, 'Лобби с указанным slug не найдено.')
+            return redirect('main')
+
+        # Сохранение пользователя в лобби
+        PlayerLobby.objects.create(
+            id_lobby=Lobby.objects.get(slug=slug),
+            id_user=request.user.id,
+            team_id=1,
+            in_lobby=True,
+        )
+
+        return redirect('detail_lobby', slug=slug)

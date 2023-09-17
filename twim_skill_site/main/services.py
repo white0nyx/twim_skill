@@ -45,15 +45,14 @@ def get_user_lobby_data(user: AbstractUser) -> dict:
     return user_data
 
 
-def get_lobby_by_slug(slug: str):
-    """Получить лобби по слагу"""
+def get_lobby_by_slug(slug: str) -> Lobby | None:
+    """Получить лобби по slug'у"""
     lobby = Lobby.objects.filter(slug=slug)
     return lobby[0] if lobby else None
 
 
 def get_player_lobby(user: AbstractUser) -> PlayerLobby | None:
     """Получить лобби, в котором находится пользователь"""
-
     player_lobby = PlayerLobby.objects.filter(id_user=user.pk, in_lobby=True)
     return player_lobby[0] if player_lobby else None
 
