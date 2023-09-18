@@ -8,9 +8,14 @@ from django.views.generic import ListView, DetailView
 from main.models import *
 from main.services import *
 
+from users.models import User
+
 
 class MainPage(ListView):
     """Главная страницы"""
+
+    model = User
+    context_object_name = 'lobbies'
 
     def get(self, request, *args, **kwargs) -> HttpResponse:
         """Обработка get-запроса"""
@@ -18,7 +23,9 @@ class MainPage(ListView):
         context = {
             'user_data': get_steam_faceit_user_data(user),
             'user_lobby_data': get_user_lobby_data(user),
+            'lobbies': Lobby.objects.all(),
         }
+
         return render(request, 'main/main.html', context)
 
 

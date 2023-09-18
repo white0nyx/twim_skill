@@ -14,11 +14,10 @@
 </ul>
 {% endif %}
 
-
 <div id="header">
-    {% if user_lobby_data.user_in_lobby %}
-    <a href="{% url 'detail_lobby' slug=user_lobby_data.user_lobby_slug %}" class="return-to-lobby-button">Вернуться к лобби</a>
-    {% endif %}
+<!--    {% if user_lobby_data.user_in_lobby %}-->
+<!--    <a href="{% url 'detail_lobby' slug=user_lobby_data.user_lobby_slug %}" class="return-to-lobby-button">Вернуться к лобби</a>-->
+<!--    {% endif %}-->
     {% if user.is_authenticated %}
     {% with faceit_user_data=user_data.faceit_user_data %}
     <p>facietlvl: {% if faceit_user_data %} {{ faceit_user_data.games.0.skill_level }} {% else %} НЕТ ДАННЫХ {% endif %}, twim coin: НЕТ ДАННЫХ, twim-lvl: НЕТ ДАННЫХ</p>
@@ -35,28 +34,42 @@
     {% endfor %}
 {% endif %}
 </div>
+
+
+
 <div id="content">
+    {% if lobbies %}
     <h1>Доступные серверы</h1>
+
     <ul id="servers">
         <!-- Здесь будут добавляться серверы динамически -->
-
+        {% for lobby in lobbies %}
         <li>
-            <p>Тип игры: Deathmatch</p>
-            <p>Карта: de_dust2</p>
-            <p>Свободных мест: 5/16</p>
-            <p>Требуемый уровень: 1+</p>
-            <button>Подключиться</button>
+            <p>ID лобби: {{ lobby.pk }}</p>
+            <p>Карта: {{ lobby.map }}</p>
+            <p>Ставка: {{ lobby.bet }}</p>
+            <p>Тип игры: НЕТ ДАННЫХ</p>
+            <p>Свободных мест: НЕТ ДАННЫХ</p>
+            <p>Требуемый уровень: {{ lobby.max_lvl_enter }}+</p>
+
+            {% if user_lobby_data.user_in_lobby.pk == lobby.pk %}
+            <a href="{% url 'detail_lobby' slug=user_lobby_data.user_lobby_slug %}">
+            <button>Вернуться к лобби</button>
+            </a>
+            {% else %}
+            <button disabled title="Для подключения необходимо покинуть предыдущее лобби">Подключиться</button>
+            {% endif %}
         </li>
         <hr>
-        <li>
-            <p>Тип игры: Capture the Flag</p>
-            <p>Карта: cs_office</p>
-            <p>Свободных мест: 8/32</p>
-            <p>Требуемый уровень: 3+</p>
-            <button>Подключиться</button>
-        </li>
+        {% endfor %}
+    {% else %}
+    <h1>Не обнаружено доступных серверов для подключения</h1>
+    {% endif %}
     </ul>
 </div>
+
+
+
 <div id="sidebar">
     <h2>Фильтры</h2>
     <label for="price-range">Цена:</label>
