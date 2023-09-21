@@ -37,7 +37,7 @@ class ProfilePage(DetailView):
 
         # Редирект для администраторов
         if user.is_superuser:
-            return render(request, 'main/admin_profile.html')
+            return render(request, 'base/admin_profile.html')
 
         # Редирект на главную, если пользователь не авторизован
         if not user.is_authenticated:

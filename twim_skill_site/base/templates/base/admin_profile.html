@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Профиль администратора</title>
-</head>
-<body>
+{% extends 'twim_skill_site/templates/base.html' %}
+
+{% block content %}
 <h1>Вы находитесь в учётной записи администратора</h1>
 Ваш ID: {{ user.id }}<br>
 USERNAME: {{ user.username }}<br>
 Данная учётная запись не привязана к Steam и FaceIT, поэтому невозможно отобразить данные из этих платформ.<br>
 <a href="{% url 'account_logout' %}">Выйти</a> | <a href="/">На главную</a>
-</body>
-</html>
+{% endblock %}
