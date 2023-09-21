@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Наши приложения
-    'main.apps.MainConfig',
+    'lobby.apps.LobbyConfig',
     'users.apps.UsersConfig',
     'base.apps.BaseConfig',
 

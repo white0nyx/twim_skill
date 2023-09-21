@@ -4,8 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
 
-from main.models import *
-from main.services import *
+from lobby.models import *
+from lobby.services import *
 from users.services import get_steam_faceit_user_data
 
 
@@ -15,7 +15,7 @@ class CreateLobbyPage(View):
     @staticmethod
     def get(request) -> HttpResponse:
         """Обработчик get-запроса"""
-        return render(request, 'main/create_lobby.html')
+        return render(request, 'lobby/create_lobby.html')
 
     @staticmethod
     def post(request) -> HttpResponseRedirect:
@@ -64,7 +64,7 @@ class DetailLobbyPage(View):
             'user_lobby_data': get_user_lobby_data(user)
         }
 
-        return render(request, 'main/detail_lobby.html', context)
+        return render(request, 'lobby/detail_lobby.html', context)
 
 
 def leave_f_lobby(request: WSGIRequest) -> HttpResponse:

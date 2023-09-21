@@ -23,7 +23,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', include('base.urls')),
-    path('', include('main.urls')),
+    path('', include('lobby.urls')),
 ]
 
 # URL для социальных сетей. В частности Steam.

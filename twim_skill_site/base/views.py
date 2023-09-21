@@ -3,8 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
 
-from main.models import Lobby
-from main.services import get_user_lobby_data
+from lobby.models import Lobby
+from lobby.services import get_user_lobby_data
 from users.models import User
 from users.services import get_steam_faceit_user_data
 

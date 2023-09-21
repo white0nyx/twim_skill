@@ -2,7 +2,7 @@ import logging
 
 from django.contrib.auth.models import AbstractUser
 
-from main.models import PlayerLobby, Lobby
+from lobby.models import PlayerLobby, Lobby
 
 logger = logging.getLogger(__name__)
 
