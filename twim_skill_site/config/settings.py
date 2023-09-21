@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # Наши приложения
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
+    'base.apps.BaseConfig',
 
     # Авторизация
     'allauth',
@@ -72,7 +73,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

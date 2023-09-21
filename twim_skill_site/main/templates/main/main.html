@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>TwimSkillMain</title>
-</head>
-<body>
+{%  extends 'twim_skill_site/templates/base.html' %}
 
+{% block content %}
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
@@ -73,5 +68,4 @@
     <input type="range" id="price-range" min="0" max="100" value="50">
     <button id="apply-filters">Применить фильтрацию</button>
 </div>
-</body>
-</html>
+{% endblock %}

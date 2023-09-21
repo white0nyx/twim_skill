@@ -25,8 +25,9 @@ from main.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
-    path('', MainPage.as_view(), name='main'),
-    path('profile/', ProfilePage.as_view(), name='profile'),
+
+    path('', include('base.urls')),
+
     path('create_lobby/', CreateLobbyPage.as_view(), name='create_lobby'),
     path('leave_f_lobby/', leave_f_lobby, name='leave_f_lobby'),
     path('detail_lobby/<slug:slug>/', DetailLobbyPage.as_view(), name='detail_lobby'),

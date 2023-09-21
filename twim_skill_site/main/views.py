@@ -3,55 +3,10 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import ListView, DetailView
+from django.views.generic import DetailView
 
 from main.models import *
 from main.services import *
-
-from users.models import User
-
-
-class MainPage(ListView):
-    """Главная страницы"""
-
-    model = User
-    context_object_name = 'lobbies'
-
-    def get(self, request, *args, **kwargs) -> HttpResponse:
-        """Обработка get-запроса"""
-        user = request.user
-        context = {
-            'user_data': get_steam_faceit_user_data(user),
-            'user_lobby_data': get_user_lobby_data(user),
-            'lobbies': Lobby.objects.all(),
-        }
-
-        return render(request, 'main/main.html', context)
-
-
-class ProfilePage(DetailView):
-    """Страница профиля пользователя"""
-
-    def get(self, request: WSGIRequest, *args, **kwargs) -> HttpResponse | HttpResponseRedirect:
-        """Обработка get-запроса"""
-
-        user = request.user
-
-        # Редирект для администраторов
-        if user.is_superuser:
-            return render(request, 'main/admin_profile.html')
-
-        # Редирект на главную, если пользователь не авторизован
-        if not user.is_authenticated:
-            return redirect('main')
-
-        # Получение данных авторизованного пользователя и открытие страницы профиля
-        context = {
-            'user_data': get_steam_faceit_user_data(user),
-            'user_lobby_data': get_user_lobby_data(user),
-        }
-
-        return render(request, 'main/profile.html', context)
 
 
 class CreateLobbyPage(View):
