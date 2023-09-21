@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'twim_skill_site/templates/base.html' %}
+
+{% block content %}
 <form method="post" action="{% url 'create_lobby' %}">
   {% csrf_token %}
   <label for="map">Map:</label>
@@ -21,5 +17,4 @@
 
   <input type="submit" value="Create Lobby">
 </form>
-</body>
-</html>
+{% endblock %}
