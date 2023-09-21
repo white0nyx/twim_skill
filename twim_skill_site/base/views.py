@@ -24,7 +24,7 @@ class MainPage(ListView):
             'lobbies': Lobby.objects.all(),
         }
 
-        return render(request, 'main/main.html', context)
+        return render(request, 'base/main.html', context)
 
 
 class ProfilePage(DetailView):
@@ -49,4 +49,4 @@ class ProfilePage(DetailView):
             'user_lobby_data': get_user_lobby_data(user),
         }
 
-        return render(request, 'main/profile.html', context)
+        return render(request, 'base/profile.html', context)

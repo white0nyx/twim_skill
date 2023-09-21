@@ -3,10 +3,10 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import DetailView
 
 from main.models import *
 from main.services import *
+from users.services import get_steam_faceit_user_data
 
 
 class CreateLobbyPage(View):

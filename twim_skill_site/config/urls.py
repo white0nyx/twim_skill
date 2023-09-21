@@ -16,26 +16,15 @@ Including another URLconf
 from importlib import import_module
 
 from allauth import app_settings
-from allauth.account import views
 from allauth.socialaccount import providers
 from django.contrib import admin
-from django.urls import path, include, re_path
-
-from main.views import *
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
-
     path('', include('base.urls')),
-
-    path('create_lobby/', CreateLobbyPage.as_view(), name='create_lobby'),
-    path('leave_f_lobby/', leave_f_lobby, name='leave_f_lobby'),
-    path('detail_lobby/<slug:slug>/', DetailLobbyPage.as_view(), name='detail_lobby'),
-    path('join_lobby/<slug:slug>/', JoinLobby.as_view(), name='join_lobby'),
-    path("logout/", views.logout, name="account_logout")
+    path('', include('main.urls')),
 ]
-
-
 
 # URL для социальных сетей. В частности Steam.
 if app_settings.SOCIALACCOUNT_ENABLED:
