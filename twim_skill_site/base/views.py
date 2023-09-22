@@ -23,7 +23,7 @@ class MainPage(ListView):
             'user_lobby_data': get_user_lobby_data(user),
             'lobbies': Lobby.objects.all(),
         }
-
+        print(get_user_lobby_data(user))
         return render(request, 'base/main.html', context)
 
 

@@ -64,6 +64,7 @@ class DetailLobbyPage(View):
             'user_lobby_data': get_user_lobby_data(user)
         }
 
+        print(get_user_lobby_data(user))
         return render(request, 'lobby/detail_lobby.html', context)
 
 
