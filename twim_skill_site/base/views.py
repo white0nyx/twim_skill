@@ -19,11 +19,12 @@ class MainPage(ListView):
         """Обработка get-запроса"""
         user = request.user
         context = {
+            'title': 'TwimSkill',
             'user_data': get_steam_faceit_user_data(user),
             'user_lobby_data': get_user_lobby_data(user),
             'lobbies': Lobby.objects.all(),
         }
-        print(get_user_lobby_data(user))
+        print(context)
         return render(request, 'base/main.html', context)
 
 
@@ -45,6 +46,7 @@ class ProfilePage(DetailView):
 
         # Получение данных авторизованного пользователя и открытие страницы профиля
         context = {
+            'title': 'Мой профиль',
             'user_data': get_steam_faceit_user_data(user),
             'user_lobby_data': get_user_lobby_data(user),
         }

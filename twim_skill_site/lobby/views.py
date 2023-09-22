@@ -60,13 +60,13 @@ class DetailLobbyPage(View):
 
         user = request.user
         context = {
+            'title': f'Лобби №{lobby.pk}',
             'lobby': lobby,
             'count_players_in_lobby': count_players_in_lobby,
             'user_data': get_steam_faceit_user_data(user),
             'user_lobby_data': get_user_lobby_data(user)
         }
 
-        print(get_user_lobby_data(user))
         return render(request, 'lobby/detail_lobby.html', context)
 
 
