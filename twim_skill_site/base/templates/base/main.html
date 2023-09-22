@@ -44,12 +44,12 @@
             <p>Свободных мест: НЕТ ДАННЫХ</p>
             <p>Требуемый уровень: {{ lobby.max_lvl_enter }}+</p>
 
-            {% if user_lobby_data.user_in_lobby.id_lobby.pk == lobby.pk %}
+            {% if user_lobby_data.user_in_lobby.lobby.pk == lobby.pk %}
             <a href="{% url 'detail_lobby' slug=user_lobby_data.user_lobby_slug %}">
             <button>Вернуться к лобби</button>
             </a>
 
-            {% elif not user_lobby_data.user_in_lobby.id_lobby.pk %}
+            {% elif not user_lobby_data.user_in_lobby.lobby.pk %}
             <a href="{% url 'detail_lobby' slug=lobby.slug %}">
             <button>Подключиться</button>
             </a>

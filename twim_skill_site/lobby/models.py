@@ -3,9 +3,11 @@ from django.utils import timezone
 from django.db import models
 from django.template.defaultfilters import slugify
 
+from users.models import User
+
 
 class Lobby(models.Model):
-    id_leader = models.IntegerField()
+    leader = models.ForeignKey(User, on_delete=models.CASCADE, related_name='leader')
     map = models.CharField(max_length=255)
     bet = models.IntegerField()
     password_lobby = models.IntegerField()
@@ -20,7 +22,7 @@ class Lobby(models.Model):
 
 
 class PlayerLobby(models.Model):
-    id_lobby = models.ForeignKey(Lobby, on_delete=models.CASCADE, related_name='players')
-    id_user = models.IntegerField()
+    lobby = models.ForeignKey(Lobby, on_delete=models.CASCADE, related_name='lobby')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users')
     team_id = models.IntegerField()
     in_lobby = models.BooleanField()

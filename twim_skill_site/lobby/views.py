@@ -20,16 +20,18 @@ class CreateLobbyPage(View):
     @staticmethod
     def post(request) -> HttpResponseRedirect:
         """Обработчик post-запроса создания лобби"""
-        if request.user.is_authenticated:
-            user_id = request.user.id
+
+        user = request.user
+
+        if user.is_authenticated:
             game_map = request.POST.get('map', 'Dust2')
             bet = request.POST.get('bet', 500)
             password_lobby = request.POST.get('password_lobby', '')
             max_lvl_enter = request.POST.get('max_lvl_enter', 3)
-            slug = slugify(f"{game_map}-{user_id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
+            slug = slugify(f"{game_map}-{user.id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
 
             lobby = Lobby.objects.create(
-                id_leader=user_id,
+                leader=user,
                 map=game_map,
                 bet=bet,
                 password_lobby=password_lobby,
@@ -39,8 +41,8 @@ class CreateLobbyPage(View):
             )
 
             PlayerLobby.objects.create(
-                id_lobby=lobby,
-                id_user=request.user.id,
+                lobby=lobby,
+                user=user,
                 team_id=1,
                 in_lobby=True
             )
@@ -54,7 +56,7 @@ class DetailLobbyPage(View):
     @staticmethod
     def get(request: WSGIRequest, slug: str) -> HttpResponse:
         lobby = Lobby.objects.get(slug=slug)
-        count_players_in_lobby = PlayerLobby.objects.filter(id_lobby=lobby, in_lobby=True).count()
+        count_players_in_lobby = PlayerLobby.objects.filter(lobby=lobby, in_lobby=True).count()
 
         user = request.user
         context = {
@@ -111,8 +113,8 @@ class JoinLobby(View):
 
         # Сохранение пользователя в лобби
         PlayerLobby.objects.create(
-            id_lobby=Lobby.objects.get(slug=slug),
-            id_user=request.user.id,
+            lobby=Lobby.objects.get(slug=slug),
+            user=user,
             team_id=1,
             in_lobby=True,
         )
