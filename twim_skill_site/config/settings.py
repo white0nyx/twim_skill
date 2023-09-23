@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'lobby.apps.LobbyConfig',
     'users.apps.UsersConfig',
     'base.apps.BaseConfig',
+    'games.apps.GamesConfig',
 
     # Авторизация
     'allauth',
