@@ -17,8 +17,11 @@ from importlib import import_module
 
 from allauth import app_settings
 from allauth.socialaccount import providers
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+
+from config import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
@@ -41,3 +44,6 @@ for provider in providers.registry.get_list():
         provider_urlpatterns += prov_urlpatterns
 
 urlpatterns += provider_urlpatterns
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

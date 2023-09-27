@@ -1,11 +1,76 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'twim_skill_site/css/style.css' %}">
+    <title>Twim-skill</title>
 </head>
 <body>
-{% block content %}
-{% endblock %}
+    <header>
+        <h1 class="logo">
+            Twim-Skill
+        </h1>
+        <div class="head-menu">
+            <div class="head-menu-item">
+                <a href="#">
+                    <img src="{% static 'twim_skill_site/images/account.png' %}">
+                </a>
+            </div>
+            <div class="head-menu-item">
+                <a href="#">
+                    <img src="{% static 'twim_skill_site/images/main.png' %}">
+                </a>
+            </div>
+            <div class="head-menu-item">
+                <a href="#">
+                    <img src="{% static 'twim_skill_site/images/game.png' %}">
+                </a>
+            </div>
+            <div class="head-menu-item">
+                <a href="#">
+                    <img src="{% static 'twim_skill_site/images/match.png' %}">
+                </a>
+            </div>
+            <div class="head-menu-item">
+                <a href="#">
+                    <img src="{% static 'twim_skill_site/images/question.png' %}">
+                </a>
+            </div>
+            <div class="head-menu-item">
+                <a href="#">
+                    <img src="{% static 'twim_skill_site/images/support.png' %}">
+                </a>
+            </div>
+        </div>
+        <div class="empty">
+
+        </div>
+    </header>
+    <div class="contents">
+        {% block content %}
+        {% endblock %}
+    </div>
+  <script>
+    var header = document.querySelector("header");
+    var content = document.querySelector(".content");
+
+    var isScrolled = false;
+
+    var headerThreshold = header.offsetHeight / 3;
+
+    window.addEventListener("scroll", function() {
+      if (window.scrollY > 0 && window.scrollY > headerThreshold) {
+        header.classList.add("scrolled");
+        isScrolled = true;
+      }
+      else if (window.scrollY == 0 || window.scrollY < headerThreshold) {
+        header.classList.remove("scrolled");
+        isScrolled = false;
+      }
+    });
+  </script>
 </body>
 </html>

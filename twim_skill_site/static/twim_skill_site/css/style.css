@@ -1,0 +1,70 @@
+@import url(http://fonts.googleapis.com/css?family=Ubuntu);
+
+* {
+    font-family: 'Ubuntu', Arial, Helvetica, sans-serif;
+    color: white;
+}
+
+body {
+    background-image: linear-gradient(#000000 5%, #1C1C28 11%, #2D2E48 18%, #000000);
+    background-attachment: fixed;
+    margin: 0;
+}
+
+header {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    font-size: 23px;
+    transition: all 0.3s ease-in-out;
+}
+
+
+header.scrolled {   
+    background-color: black;
+    flex-direction: row;
+    font-size: 10px;
+    align-items: center;
+    justify-content: space-around;
+}
+
+
+header .logo {
+    display: flex;
+    justify-content: center;
+}
+
+header .empty {
+    width: 90.55px;
+}
+
+.head-menu {
+    display: flex;
+    justify-content: center;
+}
+
+.head-menu-item {
+    padding: 5px;
+    margin: auto 18px;
+    transition: all 0.3s ease-in-out;
+}
+
+.head-menu img {
+    display: flex;
+    align-items: center;
+    width: 25px;
+    height: 25px;
+}
+
+.head-menu-item:hover {
+    border-radius: 5px;
+    background-color: #4a4b7a;
+}
+
+.contents {
+    padding-top: 150px;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
