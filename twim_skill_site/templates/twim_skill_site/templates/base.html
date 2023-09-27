@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
     <link rel="stylesheet" href="{% static 'twim_skill_site/css/style.css' %}">
     <title>{{ title }}</title>
 </head>
@@ -53,24 +53,6 @@
         {% block content %}
         {% endblock %}
     </div>
-  <script>
-    var header = document.querySelector("header");
-    var content = document.querySelector(".content");
-
-    var isScrolled = false;
-
-    var headerThreshold = header.offsetHeight / 3;
-
-    window.addEventListener("scroll", function() {
-      if (window.scrollY > 0 && window.scrollY > headerThreshold) {
-        header.classList.add("scrolled");
-        isScrolled = true;
-      }
-      else if (window.scrollY == 0 || window.scrollY < headerThreshold) {
-        header.classList.remove("scrolled");
-        isScrolled = false;
-      }
-    });
-  </script>
+    <script type="text/javascript" src='{% static "twim_skill_site/js/header_animation.js" %}'></script>
 </body>
 </html>
