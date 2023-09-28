@@ -33,6 +33,7 @@ class GameStatus(models.Model):
 class GameMode(models.Model):
     """Модель режима игры"""
     name = models.CharField(max_length=255, verbose_name='Название')
+    quantity_games = models.PositiveSmallIntegerField(verbose_name='Количество игр', unique=True)
 
     def __str__(self):
         return f'Режим игры: {self.name}_{self.pk}'
