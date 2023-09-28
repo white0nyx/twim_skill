@@ -25,8 +25,8 @@ class GameStatusAdmin(admin.ModelAdmin):
 
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'lobby', 'map', 'game_type', 'status', 'date_start', 'date_end')
-    list_filter = ('lobby', 'map', 'game_type', 'status')
+    list_display = ('pk', 'map', 'status', 'date_start', 'date_end')
+    list_filter = ('map', 'status')
     search_fields = ('lobby',)
 
 
