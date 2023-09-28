@@ -4,6 +4,24 @@
 
 {% with steam_user_data=user_data.steam_user_data %}
 <h1>Данные вашего аккаунта Steam:</h1>
+
+<div id="header">
+    {% if user.is_authenticated %}
+    {% with faceit_user_data=user_data.faceit_user_data %}
+    <p>facietlvl: {% if faceit_user_data %} {{ faceit_user_data.games.0.skill_level }} {% else %} НЕТ ДАННЫХ {% endif %}, twim coin: НЕТ ДАННЫХ, twim-lvl: НЕТ ДАННЫХ</p>
+    {% endwith %}
+    {% else %}
+    {% load socialaccount %}
+    {% get_providers as socialaccount_providers %}
+    {% for provider in socialaccount_providers %}
+    {% if provider.id == "openid" %}
+    {% endif %}
+      <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}}"
+         href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">Войти через {{provider.name}}</a>
+    {% endfor %}
+{% endif %}
+</div>
+
 <img src="{{ steam_user_data.extra_data.avatarfull}}">
 <br>
 Никнейм: {{steam_user_data.extra_data.personaname}}
@@ -35,7 +53,7 @@ guid: {{ faceit_user_data.guid }}<br>
 {% else %}
 <h1>Профиль FaceIt не обнаружен</h1>
 {% endif %}
-<a href="{% url 'account_logout' %}">Выйти</a> | <a href="{% url 'main' %}">На главную</a>
+<a href="{% url 'account_logout' %}">Выйти</a>
 {% endwith %}
 
 {% if user_lobby_data.user_in_lobby %}

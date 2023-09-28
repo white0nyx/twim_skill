@@ -11,26 +11,6 @@
 </div>
 {% endif %}
 
-<div id="header">
-    {% if user.is_authenticated %}
-    {% with faceit_user_data=user_data.faceit_user_data %}
-    <p>facietlvl: {% if faceit_user_data %} {{ faceit_user_data.games.0.skill_level }} {% else %} НЕТ ДАННЫХ {% endif %}, twim coin: НЕТ ДАННЫХ, twim-lvl: НЕТ ДАННЫХ</p>
-    {% endwith %}
-    <a href="/profile">Профиль</a>
-    {% else %}
-    {% load socialaccount %}
-    {% get_providers as socialaccount_providers %}
-    {% for provider in socialaccount_providers %}
-    {% if provider.id == "openid" %}
-    {% endif %}
-      <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}}"
-         href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">Войти через {{provider.name}}</a>
-    {% endfor %}
-{% endif %}
-</div>
-
-
-
 <div id="content">
     {% if lobbies %}
     <h1>Доступные серверы</h1>
