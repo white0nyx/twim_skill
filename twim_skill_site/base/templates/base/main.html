@@ -4,12 +4,26 @@
 {% if messages %}
 <div class="messages">
     {% for message in messages %}
-    <script {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-        window.alert("{{ message }}")
-    </script>
+        <p>{{ message }}</p>
     {% endfor %}
 </div>
 {% endif %}
+
+<div id="header">
+    {% if user.is_authenticated %}
+    {% with faceit_user_data=user_data.faceit_user_data %}
+    {% endwith %}
+    {% else %}
+    {% load socialaccount %}
+    {% get_providers as socialaccount_providers %}
+    {% for provider in socialaccount_providers %}
+    {% if provider.id == "openid" %}
+    {% endif %}
+      <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}}"
+         href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">Войти через {{provider.name}}</a>
+    {% endfor %}
+{% endif %}
+</div>
 
 <div id="content">
     {% if lobbies %}
