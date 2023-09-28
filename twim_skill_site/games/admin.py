@@ -37,6 +37,13 @@ class VetoAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+@admin.register(VetoGameModeInfo)
+class VetoGameModeInfoAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'game_mode', 'veto')
+    list_filter = ('game_mode', 'veto')
+    search_fields = ('game_mode',)
+
+
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
     list_display = ('pk', 'map', 'status', 'date_start', 'date_end')

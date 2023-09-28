@@ -46,6 +46,24 @@ class Veto(models.Model):
         return f'Вето: {self.name}_{self.pk}'
 
 
+class VetoGameModeInfo(models.Model):
+    """Модель, хранящая информацию принадлежности вето к режимам игры"""
+
+    game_mode = models.ForeignKey(GameMode,
+                                  on_delete=models.CASCADE,
+                                  related_name='veto_game_info',
+                                  db_index=False,
+                                  null=False, blank=False,
+                                  verbose_name='Режим игры')
+
+    veto = models.ForeignKey(Veto,
+                             on_delete=models.CASCADE,
+                             related_name='veto_game_info',
+                             db_index=False,
+                             null=False, blank=False,
+                             verbose_name='Вето')
+
+
 class Game(models.Model):
     """Модель матча (игры)"""
 
