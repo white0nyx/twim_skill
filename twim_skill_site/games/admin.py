@@ -24,7 +24,14 @@ class GameStatusAdmin(admin.ModelAdmin):
 
 
 @admin.register(GameMode)
-class GameStatusAdmin(admin.ModelAdmin):
+class GameModeAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'name')
+    list_filter = ('name',)
+    search_fields = ('name',)
+
+
+@admin.register(Veto)
+class VetoAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name')
     list_filter = ('name',)
     search_fields = ('name',)

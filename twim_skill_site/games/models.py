@@ -38,6 +38,14 @@ class GameMode(models.Model):
         return f'Режим игры: {self.name}_{self.pk}'
 
 
+class Veto(models.Model):
+    """Модель вето"""
+    name = models.CharField(max_length=255, verbose_name='Название')
+
+    def __str__(self):
+        return f'Вето: {self.name}_{self.pk}'
+
+
 class Game(models.Model):
     """Модель матча (игры)"""
 
