@@ -30,6 +30,14 @@ class GameStatus(models.Model):
         return f'Статус игры: {self.name}_{self.pk}'
 
 
+class GameMode(models.Model):
+    """Модель режима игры"""
+    name = models.CharField(max_length=255, verbose_name='Название')
+
+    def __str__(self):
+        return f'Режим игры: {self.name}_{self.pk}'
+
+
 class Game(models.Model):
     """Модель матча (игры)"""
 

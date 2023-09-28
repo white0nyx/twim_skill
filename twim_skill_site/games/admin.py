@@ -23,6 +23,13 @@ class GameStatusAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+@admin.register(GameMode)
+class GameStatusAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'name')
+    list_filter = ('name',)
+    search_fields = ('name',)
+
+
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
     list_display = ('pk', 'map', 'status', 'date_start', 'date_end')
