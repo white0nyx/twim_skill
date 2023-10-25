@@ -3,11 +3,10 @@ from django.db import models
 from users.models import User
 
 
-class GameMap(models.Model):
+class Map(models.Model):
     """Модель карты игры"""
     name = models.CharField(max_length=255, verbose_name='Название')
-
-    # image = models.ImageField(upload_to=)
+    image = models.ImageField(upload_to='images/maps_images')
 
     def __str__(self):
         return f'Карта: {self.name}_{self.pk}'
@@ -35,7 +34,7 @@ class Pool(models.Model):
 class PoolMapInfo(models.Model):
     """Модель связи пула и карты"""
     pool = models.ForeignKey(Pool, on_delete=models.CASCADE, related_name='+', verbose_name='Пул')
-    map = models.ForeignKey(GameMap, on_delete=models.CASCADE, related_name='+', verbose_name='Карта')
+    map = models.ForeignKey(Map, on_delete=models.CASCADE, related_name='+', verbose_name='Карта')
 
 
 class GameType(models.Model):
@@ -95,7 +94,7 @@ class Game(models.Model):
     date_start = models.DateTimeField(auto_now_add=True, verbose_name='Дата начала')
     date_end = models.DateTimeField(null=True, verbose_name='Дата окончания')
 
-    map = models.ForeignKey(GameMap,
+    map = models.ForeignKey(Map,
                             on_delete=models.PROTECT,
                             related_name='game',
                             db_index=True,
@@ -117,8 +116,8 @@ class PlayerStatisticInGame(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='+', verbose_name='Игрок')
     kills = models.IntegerField(default=0, verbose_name='Количество убийств')
-    deaths = models.IntegerField(default=0, verbose_name='Количество смертей')
     assists = models.IntegerField(default=0, verbose_name='Количество помощи')
+    deaths = models.IntegerField(default=0, verbose_name='Количество смертей')
     headshots_count = models.IntegerField(default=0, verbose_name='Количество убийств в голову')
     kr_ratio = models.FloatField(default=0, verbose_name='K/R')
     mvp = models.PositiveSmallIntegerField(default=0, verbose_name='MVP')

@@ -2,9 +2,9 @@ from django.contrib import admin
 from .models import *
 
 
-@admin.register(GameMap)
+@admin.register(Map)
 class GameMapAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name')
+    list_display = ('pk', 'name', 'image')
     list_filter = ('name',)
     search_fields = ('name',)
 
@@ -51,7 +51,7 @@ class GameAdmin(admin.ModelAdmin):
     search_fields = ('lobby',)
 
 
-@admin.register(PlayerGameInfo)
+@admin.register(PlayerMatchInfo)
 class PlayerGameInfoAdmin(admin.ModelAdmin):
     list_display = ('pk', 'game', 'user')
     list_filter = ('game', 'user',)
@@ -60,6 +60,6 @@ class PlayerGameInfoAdmin(admin.ModelAdmin):
 
 @admin.register(PlayerStatisticInGame)
 class PlayerStatisticInGameAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'game', 'user', 'accuracy', 'headshots_count', 'kills', 'deaths')
+    list_display = ('pk', 'game', 'user', 'kills', 'assists', 'deaths', 'headshots_count', 'kr_ratio', 'mvp')
     list_filter = ('game', 'user',)
     search_fields = ('game', 'user')
