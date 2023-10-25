@@ -1,6 +1,5 @@
 from django.db import models
 
-from lobby.models import Lobby
 from users.models import User
 
 
@@ -8,15 +7,35 @@ class GameMap(models.Model):
     """Модель карты игры"""
     name = models.CharField(max_length=255, verbose_name='Название')
 
-    # link = models.URLField()
+    # image = models.ImageField(upload_to=)
 
     def __str__(self):
         return f'Карта: {self.name}_{self.pk}'
 
 
+# class PoolGroup(models.Model):
+#     """Модель группы пула карт"""
+#     name = models.CharField(max_length=255, verbose_name='Название')
+#
+#     def __str__(self):
+#         return f'Группа пулов: {self.name}_{self.pk}'
+#
+#
+# class Pool(models.Model):
+#     """Модель пула карт"""
+#     name = models.CharField(max_length=255, verbose_name='Название')
+#     pool_group = models.ForeignKey(PoolGroup,
+#                                    on_delete=models.PROTECT,
+#                                    related_name='pool',
+#                                    db_index=False,
+#                                    null=False, blank=False,
+#                                    verbose_name='Группа')
+
+
 class GameType(models.Model):
     """Модель типа игры"""
     name = models.CharField(max_length=255, verbose_name='Название')
+    quantity_players = models.PositiveSmallIntegerField(verbose_name='Количество игроков', unique=True)
 
     def __str__(self):
         return f'Тип игры: {self.name}_{self.pk}'
@@ -33,7 +52,6 @@ class GameStatus(models.Model):
 class GameMode(models.Model):
     """Модель режима игры"""
     name = models.CharField(max_length=255, verbose_name='Название')
-    quantity_games = models.PositiveSmallIntegerField(verbose_name='Количество игр', unique=True)
 
     def __str__(self):
         return f'Режим игры: {self.name}_{self.pk}'
@@ -66,7 +84,7 @@ class VetoGameModeInfo(models.Model):
 
 
 class Game(models.Model):
-    """Модель матча (игры)"""
+    """Модель игры"""
 
     date_start = models.DateTimeField(auto_now_add=True, verbose_name='Дата начала')
     date_end = models.DateTimeField(null=True, verbose_name='Дата окончания')
@@ -88,7 +106,31 @@ class Game(models.Model):
         return f'Игра_{self.pk}'
 
 
-class PlayerGameInfo(models.Model):
+class PlayerStatisticInGame(models.Model):
+    """Модель статистики игрока в конкретной игре"""
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Матч')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='+', verbose_name='Игрок')
+    # accuracy = models.FloatField(default=0, verbose_name='Точность стрельбы')
+    headshots_count = models.IntegerField(default=0, verbose_name='Количество убийств в голову')
+    kills = models.IntegerField(default=0, verbose_name='Количество убийств')
+    deaths = models.IntegerField(default=0, verbose_name='Количество смертей')
+
+
+# <------------------ МАТЧИ ------------------>
+
+# Исправить везде on_delete и related_name
+class Match(models.Model):
+    """Модель матча"""
+    game1 = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра 1')
+    game2 = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра 2')
+    game3 = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра 3')
+    game4 = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра 4')
+    game5 = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра 5')
+    mode = models.ForeignKey(GameMode, on_delete=models.PROTECT, related_name='+', verbose_name='Режим BEST_OF')
+    veto = models.ForeignKey(Veto, on_delete=models.PROTECT, related_name='+', verbose_name='Вето')
+
+
+class PlayerMatchInfo(models.Model):
     """Модель записи игрока матча"""
 
     game = models.ForeignKey(Game,
@@ -105,15 +147,7 @@ class PlayerGameInfo(models.Model):
                              null=False, blank=False,
                              verbose_name='Игрок')
 
+    is_win = models.BooleanField(verbose_name='Победа')
+
     def __str__(self):
-        return f'Информация_{self.pk} о user_{self.user.primary_key} в игре {self.game.primary_key}'
-
-
-class PlayerStatisticInGame(models.Model):
-    """Модель статистики игрока в конкретной игре"""
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Матч')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='+', verbose_name='Игрок')
-    accuracy = models.FloatField(default=0, verbose_name='Точность стрельбы')
-    headshots_count = models.IntegerField(default=0, verbose_name='Количество убийств в голову')
-    kills = models.IntegerField(default=0, verbose_name='Количество убийств')
-    deaths = models.IntegerField(default=0, verbose_name='Количество смертей')
+        return f'Информация_{self.pk} о user_{self.user.pk} в игре {self.game.pk}'
