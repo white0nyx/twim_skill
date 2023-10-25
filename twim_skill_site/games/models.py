@@ -108,13 +108,17 @@ class Game(models.Model):
 
 class PlayerStatisticInGame(models.Model):
     """Модель статистики игрока в конкретной игре"""
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Матч')
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='+', verbose_name='Игрок')
-    # accuracy = models.FloatField(default=0, verbose_name='Точность стрельбы')
-    headshots_count = models.IntegerField(default=0, verbose_name='Количество убийств в голову')
     kills = models.IntegerField(default=0, verbose_name='Количество убийств')
     deaths = models.IntegerField(default=0, verbose_name='Количество смертей')
-
+    assists = models.IntegerField(default=0, verbose_name='Количество помощи')
+    headshots_count = models.IntegerField(default=0, verbose_name='Количество убийств в голову')
+    kr_ratio = models.FloatField(default=0, verbose_name='K/R')
+    mvp = models.PositiveSmallIntegerField(default=0, verbose_name='MVP')
+    triple_kills = models.PositiveSmallIntegerField(default=0, verbose_name='Количество тройных убийств')
+    quadro_kills = models.PositiveSmallIntegerField(default=0, verbose_name='Количество четверных убийств')
+    five_kills = models.PositiveSmallIntegerField(default=0, verbose_name='Количество пятерных убийств')
 
 # <------------------ МАТЧИ ------------------>
 
