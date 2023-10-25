@@ -13,23 +13,29 @@ class GameMap(models.Model):
         return f'Карта: {self.name}_{self.pk}'
 
 
-# class PoolGroup(models.Model):
-#     """Модель группы пула карт"""
-#     name = models.CharField(max_length=255, verbose_name='Название')
-#
-#     def __str__(self):
-#         return f'Группа пулов: {self.name}_{self.pk}'
-#
-#
-# class Pool(models.Model):
-#     """Модель пула карт"""
-#     name = models.CharField(max_length=255, verbose_name='Название')
-#     pool_group = models.ForeignKey(PoolGroup,
-#                                    on_delete=models.PROTECT,
-#                                    related_name='pool',
-#                                    db_index=False,
-#                                    null=False, blank=False,
-#                                    verbose_name='Группа')
+class PoolGroup(models.Model):
+    """Модель группы пула карт"""
+    name = models.CharField(max_length=255, verbose_name='Название')
+
+    def __str__(self):
+        return f'Группа пулов: {self.name}_{self.pk}'
+
+
+class Pool(models.Model):
+    """Модель пула карт"""
+    name = models.CharField(max_length=255, verbose_name='Название')
+    pool_group = models.ForeignKey(PoolGroup,
+                                   on_delete=models.PROTECT,
+                                   related_name='pool',
+                                   db_index=False,
+                                   null=False, blank=False,
+                                   verbose_name='Группа')
+
+
+class PoolMapInfo(models.Model):
+    """Модель связи пула и карты"""
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE, related_name='+', verbose_name='Пул')
+    map = models.ForeignKey(GameMap, on_delete=models.CASCADE, related_name='+', verbose_name='Карта')
 
 
 class GameType(models.Model):
@@ -119,6 +125,7 @@ class PlayerStatisticInGame(models.Model):
     triple_kills = models.PositiveSmallIntegerField(default=0, verbose_name='Количество тройных убийств')
     quadro_kills = models.PositiveSmallIntegerField(default=0, verbose_name='Количество четверных убийств')
     five_kills = models.PositiveSmallIntegerField(default=0, verbose_name='Количество пятерных убийств')
+
 
 # <------------------ МАТЧИ ------------------>
 
