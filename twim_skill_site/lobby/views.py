@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib import messages
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse, HttpResponseRedirect
@@ -22,32 +24,40 @@ class CreateLobbyPage(View):
         """Обработчик post-запроса создания лобби"""
 
         user = request.user
+        insufficient_balance = False
 
         if user.is_authenticated:
-            game_map = request.POST.get('map', 'Dust2')
-            bet = request.POST.get('bet', 500)
-            password_lobby = request.POST.get('password_lobby', '')
-            max_lvl_enter = request.POST.get('max_lvl_enter', 3)
+            game_map = request.POST.get('map')
+            bet = Decimal(request.POST.get('bet', 0))
+            password_lobby = request.POST.get('password_lobby')
+            max_lvl_enter = request.POST.get('max_lvl_enter')
+            min_lvl_enter = request.POST.get('min_lvl_enter')
             slug = slugify(f"{game_map}-{user.id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
 
-            lobby = Lobby.objects.create(
-                leader=user,
-                map=game_map,
-                bet=bet,
-                password_lobby=password_lobby,
-                max_lvl_enter=max_lvl_enter,
-                deleted=False,
-                slug=slug
-            )
+            if user.balance >= bet:
+                lobby = Lobby.objects.create(
+                    leader=user,
+                    map=game_map,
+                    bet=bet,
+                    password_lobby=password_lobby,
+                    max_lvl_enter=max_lvl_enter,
+                    min_lvl_enter=min_lvl_enter,
+                    deleted=False,
+                    slug=slug
+                )
 
-            PlayerLobby.objects.create(
-                lobby=lobby,
-                user=user,
-                team_id=1,
-                in_lobby=True
-            )
+                PlayerLobby.objects.create(
+                    lobby=lobby,
+                    user=user,
+                    team_id=1,
+                    in_lobby=True
+                )
 
-            return redirect('detail_lobby', slug=slug)
+                return redirect('detail_lobby', slug=slug)
+            else:
+                insufficient_balance = True
+
+        return render(request, 'create_lobby.html', {'insufficient_balance': insufficient_balance})
 
 
 class DetailLobbyPage(View):

@@ -12,7 +12,7 @@
 <div id="header">
     {% if user.is_authenticated %}
     {% with faceit_user_data=user_data.faceit_user_data %}
-    <p>facietlvl: {% if faceit_user_data %} {{ faceit_user_data.games.0.skill_level }} {% else %} НЕТ ДАННЫХ {% endif %}, twim coin: НЕТ ДАННЫХ, twim-lvl: НЕТ ДАННЫХ</p>
+    <p>facietlvl: {% if faceit_user_data %} {{ faceit_user_data.games.0.skill_level }} {% else %} НЕТ ДАННЫХ {% endif %}, twim coin: {{ user.balance }}, twim-lvl: {{ user.experience }}</p>
     {% endwith %}
     <a href="/profile">Профиль</a>
     {% else %}

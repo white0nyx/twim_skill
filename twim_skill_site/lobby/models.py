@@ -5,13 +5,13 @@ from django.template.defaultfilters import slugify
 
 from users.models import User
 
-
 class Lobby(models.Model):
     leader = models.ForeignKey(User, on_delete=models.CASCADE, related_name='leader')
     map = models.CharField(max_length=255)
     bet = models.IntegerField()
-    password_lobby = models.IntegerField()
-    max_lvl_enter = models.IntegerField()
+    password_lobby = models.CharField(max_length=255, null=True)
+    max_lvl_enter = models.IntegerField(null=True)
+    min_lvl_enter = models.IntegerField(null=True)
     deleted = models.BooleanField()
     slug = models.SlugField(unique=True, blank=True, null=True)
 
