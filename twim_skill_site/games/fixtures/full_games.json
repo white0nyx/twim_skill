@@ -119,21 +119,21 @@
 },
 {
     "model": "games.gamestatus",
-    "pk": 4,
+    "pk": 1,
     "fields": {
         "name": "preparing"
     }
 },
 {
     "model": "games.gamestatus",
-    "pk": 5,
+    "pk": 2,
     "fields": {
         "name": "running"
     }
 },
 {
     "model": "games.gamestatus",
-    "pk": 6,
+    "pk": 3,
     "fields": {
         "name": "finished"
     }
