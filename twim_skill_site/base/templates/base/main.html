@@ -39,11 +39,13 @@
         {% for lobby in lobbies %}
         <li>
             <p>ID лобби: {{ lobby.pk }}</p>
-            <p>Карта: {{ lobby.map }}</p>
+            <img width="300" height="150" src="{{ lobby.map.image.url }}">
+            <p>Карта: {{ lobby.map.name }}</p>
             <p>Ставка: {{ lobby.bet }}</p>
             <p>Тип игры: НЕТ ДАННЫХ</p>
             <p>Свободных мест: НЕТ ДАННЫХ</p>
-            <p>Требуемый уровень: {{ lobby.max_lvl_enter }}+</p>
+            <p>Минимальный уровень для входа: {{ lobby.min_lvl_enter }}</p>
+            <p>Максимальный уровень для входа: {{ lobby.max_lvl_enter }}</p>
 
             {% if user_lobby_data.user_in_lobby.lobby.pk == lobby.pk %}
             <a href="{% url 'detail_lobby' slug=user_lobby_data.user_lobby_slug %}">
