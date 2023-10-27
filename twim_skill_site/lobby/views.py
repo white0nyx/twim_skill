@@ -1,8 +1,6 @@
 from decimal import Decimal
 
-from django.contrib import messages
-from django.core.handlers.wsgi import WSGIRequest
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -112,24 +110,27 @@ class JoinLobby(View):
     """Присоединение к лобби"""
 
     def get(self, request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
-        user, lobby = check_user(request, request.user, slug)
-        if isinstance(user, HttpResponseRedirect):
-            return user
+        error = check_user(request, request.user, slug)
 
-        create_player_lobby(user, slug)
+        if error:
+            return error
 
+        create_player_lobby(request.user, slug)
         return redirect('detail_lobby', slug=slug)
 
     def post(self, request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
-        user, lobby = check_user(request, request.user, slug)
-        if isinstance(user, HttpResponseRedirect):
-            return user
+        error = check_user(request, request.user, slug)
+
+        if error:
+            return error
+
+        lobby = get_lobby_by_slug(slug)
 
         form = LobbyPasswordForm(request.POST)
         if lobby.password_lobby and form.is_valid():
             entered_password = form.cleaned_data['password']
             if entered_password == lobby.password_lobby:
-                create_player_lobby(user, slug)
+                create_player_lobby(request.user, slug)
                 return redirect('detail_lobby', slug=slug)
             else:
                 messages.error(request, 'Неверный пароль для присоединения к лобби.')

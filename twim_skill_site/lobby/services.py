@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from django.contrib import messages
 from django.core.handlers.wsgi import WSGIRequest
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from users.services import get_steam_faceit_user_data
 
 from lobby.models import PlayerLobby, Lobby
@@ -56,42 +56,8 @@ def leave_lobby_with_delete(lobby: PlayerLobby) -> None:
     lobby.delete()
     lobby_to_delete.delete()
 
-def check_user(request: WSGIRequest, user: AbstractUser, slug: str) -> tuple[HttpResponse | HttpResponseRedirect, Lobby | None]:
-    """Проверка пользователя перед входом в лобби"""
-    lobby = get_lobby_by_slug(slug)
-    user_lobby = get_player_lobby(user)
-    user_data = get_steam_faceit_user_data(user)
-    user_level = user_data['faceit_user_data']['games'][0]['skill_level'] if user_data['faceit_user_data'] else None
 
-    if not user.is_authenticated:
-        messages.error(request, 'Пройдите авторизацию для присоединения к лобби.')
-        return HttpResponseRedirect('main'), None
-
-    if user_lobby:
-        messages.error(request, 'Вы уже находитесь в данном лобби.')
-        return HttpResponseRedirect('main'), None
-
-    if not lobby:
-        messages.error(request, 'Лобби с указанным slug не найдено.')
-        return HttpResponseRedirect('main'), None
-
-    if not user_level or user_level < lobby.min_lvl_enter and user_level > lobby.max_lvl_enter:
-        messages.error(request, 'Ваш уровень Faceit не соответствует требованиям лобби.')
-        return HttpResponseRedirect(reverse('detail_lobby', args=[slug])), None
-
-    return user, lobby
-
-
-def create_player_lobby(user: AbstractUser, slug: str):
-    """Присоединение пользователя к лобби"""
-    PlayerLobby.objects.create(
-        lobby=Lobby.objects.get(slug=slug),
-        user=user,
-        team_id=1,
-        in_lobby=True,
-    )
-
-def check_user(request: WSGIRequest, user: AbstractUser, slug: str) -> tuple[HttpResponse | HttpResponseRedirect, Lobby | None]:
+def check_user(request: WSGIRequest, user: AbstractUser, slug: str) -> HttpResponseRedirect | None:
     """Проверка пользователя перед входом в лобби"""
     lobby = get_lobby_by_slug(slug)
     user_lobby = get_player_lobby(user)
@@ -99,22 +65,20 @@ def check_user(request: WSGIRequest, user: AbstractUser, slug: str) -> tuple[Htt
     user_level = user_data['faceit_user_data']['games'][0]['skill_level']
 
     if not user_level or (user_level < lobby.min_lvl_enter or user_level > lobby.max_lvl_enter):
-        messages.error(request, 'Ваш уровень faciet не соотвествует условиям лобби.')
-        return HttpResponseRedirect(reverse('detail_lobby', args=[slug])), None
+        messages.error(request, 'Ваш уровень faceit не соответствует условиям лобби.')
+        return HttpResponseRedirect(reverse('detail_lobby', args=[slug]))
 
     if not user.is_authenticated:
         messages.error(request, 'Пройдите авторизацию для присоединения к лобби.')
-        return HttpResponseRedirect('main'), None
+        return HttpResponseRedirect('main')
 
     if user_lobby:
         messages.error(request, 'Вы уже находитесь в данном лобби.')
-        return HttpResponseRedirect(reverse('detail_lobby', args=[slug])), None
+        return HttpResponseRedirect(reverse('detail_lobby', args=[slug]))
 
     if not lobby:
         messages.error(request, 'Лобби с указанным slug не найдено.')
-        return HttpResponseRedirect('main'), None
-
-    return user, lobby
+        return HttpResponseRedirect('main')
 
 
 def create_player_lobby(user: AbstractUser, slug: str):
