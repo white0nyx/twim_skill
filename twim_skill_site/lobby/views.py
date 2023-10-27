@@ -49,7 +49,7 @@ class CreateLobbyPage(View):
             if user.balance >= bet:
                 lobby = Lobby.objects.create(
                     leader=user,
-                    map=game_map,
+                    map=Map.objects.get(name=game_map),
                     game_type=GameType.objects.get(name=game_type),
                     game_mode=GameMode.objects.get(name=game_mode),
                     veto=Veto.objects.get(name=veto),

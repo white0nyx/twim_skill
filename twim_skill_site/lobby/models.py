@@ -3,13 +3,13 @@ from django.utils import timezone
 from django.db import models
 from django.template.defaultfilters import slugify
 
-from games.models import GameType, GameMode, Veto, Pool
+from games.models import GameType, GameMode, Veto, Pool, Map
 from users.models import User
 
 
 class Lobby(models.Model):
     leader = models.ForeignKey(User, on_delete=models.CASCADE, related_name='leader', verbose_name='Лидер')
-    map = models.CharField(max_length=255, verbose_name='Карта')
+    map = models.ForeignKey(Map, on_delete=models.PROTECT, max_length=255, verbose_name='Карта')
     game_type = models.ForeignKey(GameType, on_delete=models.PROTECT, related_name='+', verbose_name='Тип игры')
     game_mode = models.ForeignKey(GameMode, on_delete=models.PROTECT, related_name='+', verbose_name='Режим игры')
     veto = models.ForeignKey(Veto, on_delete=models.PROTECT, related_name='+', verbose_name='Вето')
