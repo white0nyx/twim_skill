@@ -4,8 +4,7 @@ from .models import *
 
 @admin.register(Lobby)
 class LobbyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'leader', 'map', 'bet', 'password_lobby', 'max_lvl_enter', 'deleted', 'slug')
-    list_filter = ('deleted',)
+    list_display = ('id', 'leader', 'map', 'bet', 'password_lobby', 'max_lvl_enter', 'slug')
     search_fields = ('leader', 'map')
 
 

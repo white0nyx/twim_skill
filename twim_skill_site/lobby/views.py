@@ -35,6 +35,11 @@ class CreateLobbyPage(View):
         insufficient_balance = False
 
         if user.is_authenticated:
+            print(request.POST)
+            game_type = request.POST.get('game_type')
+            game_mode = request.POST.get('game_mode')
+            veto = request.POST.get('veto')
+            pool = request.POST.get('pool')
             game_map = request.POST.get('maps')
             bet = Decimal(request.POST.get('bet')) if request.POST.get('bet') else 0
             password_lobby = request.POST.get('password_lobby')
@@ -46,11 +51,14 @@ class CreateLobbyPage(View):
                 lobby = Lobby.objects.create(
                     leader=user,
                     map=game_map,
+                    game_type=GameType.objects.get(name=game_type),
+                    game_mode=GameMode.objects.get(name=game_mode),
+                    veto=Veto.objects.get(name=veto),
+                    pool=Pool.objects.get(name=pool),
                     bet=bet,
                     password_lobby=password_lobby,
                     max_lvl_enter=max_lvl_enter,
                     min_lvl_enter=min_lvl_enter,
-                    deleted=False,
                     slug=slug
                 )
 

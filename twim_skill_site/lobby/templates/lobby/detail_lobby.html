@@ -11,6 +11,10 @@
 <h1> Успешное создание лобби </h1>
 <h1>Детали лобби</h1>
 
+    <p>Тип: {{ lobby.game_type.name }}</p>
+    <p>Режим: {{ lobby.game_mode.name }}</p>
+    <p>Вето: {{ lobby.veto.name }}</p>
+    <p>Пул: {{ lobby.pool.name }}</p>
     <p>Карта: {{ lobby.map }}</p>
     <p>Ставка: {{ lobby.bet }}</p>
     <p>Пароль для лобби: {{ lobby.password_lobby }}</p>
