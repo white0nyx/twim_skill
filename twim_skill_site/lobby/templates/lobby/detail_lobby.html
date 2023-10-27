@@ -1,20 +1,37 @@
 {% extends 'twim_skill_site/templates/base.html' %}
 
 {% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 <h1> Успешное создание лобби </h1>
 <h1>Детали лобби</h1>
 
-    <p>Название лобби: {{ lobby.map }}</p>
-    <p>Ставка: {{ lobby.bet }}</p>
-    <p>Пароль для лобби: {{ lobby.password_lobby }}</p>
-    <p>Минимальный уровень для входа: {{ lobby.min_lvl_enter }}</p>
-    <p>Максимальный уровень для входа: {{ lobby.max_lvl_enter }}</p>
+<p>Название лобби: {{ lobby.map }}</p>
+<p>Ставка: {{ lobby.bet }}</p>
+<p>Пароль для лобби: {{ lobby.password_lobby }}</p>
+<p>Минимальный уровень для входа: {{ lobby.min_lvl_enter }}</p>
+<p>Максимальный уровень для входа: {{ lobby.max_lvl_enter }}</p>
 
-    <p>Количество игроков в лобби: {{ count_players_in_lobby }}</p>
+<p>Количество игроков в лобби: {{ count_players_in_lobby }}</p>
 
-{% if not user_lobby_data.user_in_lobby  %}
+
+{% if not lobby.password_lobby and not user_lobby_data.user_in_lobby%}
 <a href="{% url 'join_lobby' slug=lobby.slug %}" class="join-lobby-button">Присоединиться к лобби</a>
-{% else  %}
+{% elif lobby.password_lobby and not user_lobby_data.user_in_lobby %}
+<div>
+    <h2>Введите пароль для лобби:</h2>
+    <form method="post" action="{% url 'join_lobby' slug=lobby.slug %}">
+        {% csrf_token %}
+        <input type="password" name="password" required>
+        <button type="submit">Присоединиться</button>
+    </form>
+</div>
+{% else %}
 <a href="{% url 'leave_f_lobby' %}" class="create-lobby-button">Выйти из лобби</a>
 {% endif %}
 <a href="/">На главную</a>

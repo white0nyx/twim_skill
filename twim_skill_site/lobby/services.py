@@ -1,6 +1,11 @@
 import logging
 
 from django.contrib.auth.models import AbstractUser
+from django.contrib import messages
+from django.core.handlers.wsgi import WSGIRequest
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect
+from users.services import get_steam_faceit_user_data
 
 from lobby.models import PlayerLobby, Lobby
 
@@ -50,3 +55,32 @@ def leave_lobby_with_delete(lobby: PlayerLobby) -> None:
     lobby_to_delete = lobby.lobby
     lobby.delete()
     lobby_to_delete.delete()
+
+def check_user(request: WSGIRequest, user: AbstractUser, slug: str) -> tuple[HttpResponse | HttpResponseRedirect, Lobby | None]:
+    """Проверка пользователя перед входом в лобби"""
+    lobby = get_lobby_by_slug(slug)
+    user_lobby = get_player_lobby(user)
+
+    if not user.is_authenticated:
+        messages.error(request, 'Пройдите авторизацию для присоединения к лобби.')
+        return HttpResponseRedirect('detail_lobby', slug=slug), None
+
+    if user_lobby:
+        messages.error(request, 'Вы уже находитесь в данном лобби.')
+        return HttpResponseRedirect('detail_lobby', slug=slug), None
+
+    if not lobby:
+        messages.error(request, 'Лобби с указанным slug не найдено.')
+        return HttpResponseRedirect('detail_lobby', slug=slug), None
+
+    return user, lobby
+
+
+def create_player_lobby(user: AbstractUser, slug: str):
+    """Присоединение пользователя к лобби"""
+    PlayerLobby.objects.create(
+        lobby=Lobby.objects.get(slug=slug),
+        user=user,
+        team_id=1,
+        in_lobby=True,
+    )

@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
 
+from lobby.forms import LobbyPasswordForm
 from lobby.models import *
 from lobby.services import *
 from users.services import get_steam_faceit_user_data
@@ -100,33 +101,28 @@ def leave_f_lobby(request: WSGIRequest) -> HttpResponse:
 class JoinLobby(View):
     """Присоединение к лобби"""
 
-    @staticmethod
-    def get(request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
-        """Обработка get-запроса"""
+    def get(self, request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
+        user, lobby = check_user(request, request.user, slug)
+        if isinstance(user, HttpResponseRedirect):
+            return user
 
-        user = request.user
+        create_player_lobby(user, slug)
 
-        # Редирект неавторизованного пользователя на главную страницу
-        if not user.is_authenticated:
-            messages.error(request, 'Пройдите авторизацию для присоединения к лобби.')
-            return redirect('main')
+        return redirect('detail_lobby', slug=slug)
 
-        # Редирект пользователя, который уже находится в лобби
-        elif get_player_lobby(user):
-            messages.error(request, 'Вы уже находитесь в данном лобби.')
-            return redirect('main')
+    def post(self, request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
+        user, lobby = check_user(request, request.user, slug)
+        if isinstance(user, HttpResponseRedirect):
+            return user
 
-        # Ошибка slug'а лобби
-        elif not get_lobby_by_slug(slug):
-            messages.error(request, 'Лобби с указанным slug не найдено.')
-            return redirect('main')
-
-        # Сохранение пользователя в лобби
-        PlayerLobby.objects.create(
-            lobby=Lobby.objects.get(slug=slug),
-            user=user,
-            team_id=1,
-            in_lobby=True,
-        )
+        form = LobbyPasswordForm(request.POST)
+        if lobby.password_lobby and form.is_valid():
+            entered_password = form.cleaned_data['password']
+            if entered_password == lobby.password_lobby:
+                create_player_lobby(user, slug)
+                return redirect('detail_lobby', slug=slug)
+            else:
+                messages.error(request, 'Неверный пароль для присоединения к лобби.')
+                return redirect('detail_lobby', slug=slug)
 
         return redirect('detail_lobby', slug=slug)
