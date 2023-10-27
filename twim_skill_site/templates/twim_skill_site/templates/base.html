@@ -15,17 +15,17 @@
         </h1>
         <div class="head-menu">
             <div class="head-menu-item">
-                <a href="#">
+                <a href="{% url 'profile' %}">
                     <img src="{% static 'twim_skill_site/images/account.png' %}">
                 </a>
             </div>
             <div class="head-menu-item">
-                <a href="#">
+                <a href="{% url 'main' %}">
                     <img src="{% static 'twim_skill_site/images/main.png' %}">
                 </a>
             </div>
             <div class="head-menu-item">
-                <a href="#">
+                <a href="{% url 'create_lobby' %}">
                     <img src="{% static 'twim_skill_site/images/game.png' %}">
                 </a>
             </div>
@@ -40,7 +40,7 @@
                 </a>
             </div>
             <div class="head-menu-item">
-                <a href="#">
+                <a href="{% url 'account_logout' %}">
                     <img src="{% static 'twim_skill_site/images/support.png' %}">
                 </a>
             </div>
