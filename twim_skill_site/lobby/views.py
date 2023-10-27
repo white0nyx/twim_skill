@@ -35,7 +35,6 @@ class CreateLobbyPage(View):
         insufficient_balance = False
 
         if user.is_authenticated:
-            print(request.POST)
             game_type = request.POST.get('game_type')
             game_mode = request.POST.get('game_mode')
             veto = request.POST.get('veto')
