@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from lobby.forms import LobbyPasswordForm
-from games.models import Map
+from games.models import Map, GameType, GameMode, Veto, Pool
 from lobby.models import *
 from lobby.services import *
 from users.services import get_steam_faceit_user_data
@@ -19,6 +19,10 @@ class CreateLobbyPage(View):
         """Обработчик get-запроса"""
 
         context = {
+            'games_types': GameType.objects.all(),
+            'games_modes': GameMode.objects.all(),
+            'vetos': Veto.objects.all(),
+            'pools': Pool.objects.all(),
             'maps': Map.objects.all(),
         }
         return render(request, 'lobby/create_lobby.html', context)
@@ -63,6 +67,10 @@ class CreateLobbyPage(View):
 
         context = {
             'insufficient_balance': insufficient_balance,
+            'games_types': GameType.objects.all(),
+            'games_modes': GameMode.objects.all(),
+            'vetos': Veto.objects.all(),
+            'pools': Pool.objects.all(),
             'maps': Map.objects.all(),
         }
 
