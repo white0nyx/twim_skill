@@ -76,7 +76,6 @@ def check_user(request: WSGIRequest, user: AbstractUser, slug: str) -> tuple[Htt
         return HttpResponseRedirect('main'), None
 
     if not user_level or user_level < lobby.min_lvl_enter and user_level > lobby.max_lvl_enter:
-        print(user_level)
         messages.error(request, 'Ваш уровень Faceit не соответствует требованиям лобби.')
         return HttpResponseRedirect(reverse('detail_lobby', args=[slug])), None
 
