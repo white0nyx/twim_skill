@@ -5,7 +5,7 @@ from django.db import models
 class User(AbstractUser):
     """Изменённая модель пользователя"""
     experience = models.IntegerField(default=0, verbose_name='Опыт')
-    balance = models.DecimalField(max_digits=8, decimal_places=2, null=True, verbose_name='Баланс')
+    balance = models.DecimalField(default=0, max_digits=8, decimal_places=2, null=True, verbose_name='Баланс')
 
 
 # <-------------- Операции с балансом -------------->
