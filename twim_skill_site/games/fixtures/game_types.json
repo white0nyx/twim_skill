@@ -1,0 +1,42 @@
+[
+{
+    "model": "games.gametype",
+    "pk": 1,
+    "fields": {
+        "name": "1x1",
+        "quantity_players": 2
+    }
+},
+{
+    "model": "games.gametype",
+    "pk": 2,
+    "fields": {
+        "name": "2x2",
+        "quantity_players": 4
+    }
+},
+{
+    "model": "games.gametype",
+    "pk": 3,
+    "fields": {
+        "name": "3x3",
+        "quantity_players": 6
+    }
+},
+{
+    "model": "games.gametype",
+    "pk": 4,
+    "fields": {
+        "name": "4x4",
+        "quantity_players": 8
+    }
+},
+{
+    "model": "games.gametype",
+    "pk": 5,
+    "fields": {
+        "name": "5x5",
+        "quantity_players": 10
+    }
+}
+]

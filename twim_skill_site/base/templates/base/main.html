@@ -1,4 +1,5 @@
 {%  extends 'twim_skill_site/templates/base.html' %}
+{% load templatetags %}
 
 {% block content %}
 {% if messages %}
@@ -12,7 +13,7 @@
 <div id="header">
     {% if user.is_authenticated %}
     {% with faceit_user_data=user_data.faceit_user_data %}
-    <p>facietlvl: {% if faceit_user_data %} {{ faceit_user_data.games.0.skill_level }} {% else %} НЕТ ДАННЫХ {% endif %}, twim coin: {{ user.balance }}, twim-lvl: {{ user.experience }}</p>
+    <p>facietlvl: {% if faceit_user_data %} {{ faceit_user_data.games.0.skill_level }} {% else %} НЕТ ДАННЫХ {% endif %}, twim coin: {{ user.balance|remove_trailing_zeros  }}, twim-lvl: {{ user.experience }}</p>
     {% endwith %}
     <a href="/profile">Профиль</a>
     {% else %}

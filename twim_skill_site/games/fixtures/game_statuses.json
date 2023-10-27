@@ -1,0 +1,23 @@
+[
+{
+    "model": "games.gamestatus",
+    "pk": 1,
+    "fields": {
+        "name": "preparing"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 2,
+    "fields": {
+        "name": "running"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 3,
+    "fields": {
+        "name": "finished"
+    }
+}
+]

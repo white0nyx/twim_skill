@@ -1,0 +1,26 @@
+[
+{
+    "model": "games.map",
+    "pk": 1,
+    "fields": {
+        "name": "Dust II",
+        "image": "images/maps_images/dust2.webp"
+    }
+},
+{
+    "model": "games.map",
+    "pk": 2,
+    "fields": {
+        "name": "Inferno",
+        "image": "images/maps_images/inferno.jpg"
+    }
+},
+{
+    "model": "games.map",
+    "pk": 3,
+    "fields": {
+        "name": "Mirage",
+        "image": "images/maps_images/mirage.webp"
+    }
+}
+]

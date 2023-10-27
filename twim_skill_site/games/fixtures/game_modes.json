@@ -1,0 +1,23 @@
+[
+{
+    "model": "games.gamemode",
+    "pk": 1,
+    "fields": {
+        "name": "BEST OF 1"
+    }
+},
+{
+    "model": "games.gamemode",
+    "pk": 2,
+    "fields": {
+        "name": "BEST OF 3"
+    }
+},
+{
+    "model": "games.gamemode",
+    "pk": 3,
+    "fields": {
+        "name": "BEST OF 5"
+    }
+}
+]

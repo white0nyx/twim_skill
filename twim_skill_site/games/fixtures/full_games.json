@@ -1,0 +1,183 @@
+[
+{
+    "model": "games.map",
+    "pk": 1,
+    "fields": {
+        "name": "Dust II",
+        "image": "images/maps_images/dust2.webp"
+    }
+},
+{
+    "model": "games.map",
+    "pk": 2,
+    "fields": {
+        "name": "Inferno",
+        "image": "images/maps_images/inferno.jpg"
+    }
+},
+{
+    "model": "games.map",
+    "pk": 3,
+    "fields": {
+        "name": "Mirage",
+        "image": "images/maps_images/mirage.webp"
+    }
+},
+{
+    "model": "games.poolgroup",
+    "pk": 1,
+    "fields": {
+        "name": "standard"
+    }
+},
+{
+    "model": "games.poolgroup",
+    "pk": 2,
+    "fields": {
+        "name": "custom"
+    }
+},
+{
+    "model": "games.pool",
+    "pk": 1,
+    "fields": {
+        "name": "Wigman",
+        "pool_group": 1
+    }
+},
+{
+    "model": "games.pool",
+    "pk": 2,
+    "fields": {
+        "name": "Esporst",
+        "pool_group": 1
+    }
+},
+{
+    "model": "games.pool",
+    "pk": 3,
+    "fields": {
+        "name": "Default",
+        "pool_group": 1
+    }
+},
+{
+    "model": "games.pool",
+    "pk": 4,
+    "fields": {
+        "name": "AIM",
+        "pool_group": 2
+    }
+},
+{
+    "model": "games.pool",
+    "pk": 5,
+    "fields": {
+        "name": "mapx workshop",
+        "pool_group": 2
+    }
+},
+{
+    "model": "games.gametype",
+    "pk": 1,
+    "fields": {
+        "name": "1x1",
+        "quantity_players": 2
+    }
+},
+{
+    "model": "games.gametype",
+    "pk": 2,
+    "fields": {
+        "name": "2x2",
+        "quantity_players": 4
+    }
+},
+{
+    "model": "games.gametype",
+    "pk": 3,
+    "fields": {
+        "name": "3x3",
+        "quantity_players": 6
+    }
+},
+{
+    "model": "games.gametype",
+    "pk": 4,
+    "fields": {
+        "name": "4x4",
+        "quantity_players": 8
+    }
+},
+{
+    "model": "games.gametype",
+    "pk": 5,
+    "fields": {
+        "name": "5x5",
+        "quantity_players": 10
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 1,
+    "fields": {
+        "name": "preparing"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 2,
+    "fields": {
+        "name": "running"
+    }
+},
+{
+    "model": "games.gamestatus",
+    "pk": 3,
+    "fields": {
+        "name": "finished"
+    }
+},
+{
+    "model": "games.gamemode",
+    "pk": 1,
+    "fields": {
+        "name": "BEST OF 1"
+    }
+},
+{
+    "model": "games.gamemode",
+    "pk": 2,
+    "fields": {
+        "name": "BEST OF 3"
+    }
+},
+{
+    "model": "games.gamemode",
+    "pk": 3,
+    "fields": {
+        "name": "BEST OF 5"
+    }
+},
+{
+    "model": "games.veto",
+    "pk": 1,
+    "fields": {
+        "name": "default"
+    }
+},
+{
+    "model": "games.veto",
+    "pk": 2,
+    "fields": {
+        "name": "esporst"
+    }
+},
+{
+    "model": "games.veto",
+    "pk": 3,
+    "fields": {
+        "name": "cs2 mode"
+    }
+}
+]

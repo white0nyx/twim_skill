@@ -1,0 +1,30 @@
+[
+{
+    "model": "users.typeofoperations",
+    "pk": 1,
+    "fields": {
+        "name": "game"
+    }
+},
+{
+    "model": "users.typeofoperations",
+    "pk": 2,
+    "fields": {
+        "name": "replenishment"
+    }
+},
+{
+    "model": "users.typeofoperations",
+    "pk": 3,
+    "fields": {
+        "name": "withdrawal"
+    }
+},
+{
+    "model": "users.typeofoperations",
+    "pk": 4,
+    "fields": {
+        "name": "correction"
+    }
+}
+]

@@ -4,7 +4,11 @@
 <form method="post" action="{% url 'create_lobby' %}">
   {% csrf_token %}
   <label for="map">Map:</label>
-  <input type="text" id="map" name="map" required><br>
+  <select id="maps" name="maps">
+      {% for map in maps %}
+          <option value="{{ map.name }}">{{ map.name }}</option>
+      {% endfor %}
+  </select><br>
 
   <label for="bet">Bet:</label>
   <input type="number" id="bet" name="bet" ><br>

@@ -21,7 +21,7 @@ header {
 }
 
 
-header.scrolled {   
+header.scrolled {
     background-color: black;
     flex-direction: row;
     font-size: 10px;
@@ -69,10 +69,6 @@ header .empty {
     margin-right: auto;
 }
 
-input {
-    color: black;
-}
-
-button {
+input, button, select, option {
     color: black;
 }
