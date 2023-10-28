@@ -20,7 +20,6 @@ class CreateLobbyPage(View):
 
         user = request.user
         leader = Lobby.objects.filter(leader=user)
-
         context = {
             'games_types': GameType.objects.all(),
             'games_modes': GameMode.objects.all(),
@@ -28,13 +27,15 @@ class CreateLobbyPage(View):
             'pools': Pool.objects.all(),
             'maps': Map.objects.all(),
         }
-        return render(request, 'lobby/create_lobby.html', context)
 
         if not leader:
-            return render(request, 'lobby/create_lobby.html')
+            return render(request, 'lobby/create_lobby.html', context)
         else:
             messages.error(request, 'У вас уже создано лобби.')
             return redirect('detail_lobby', slug=leader[0].slug)
+
+
+
 
     @staticmethod
     def post(request) -> HttpResponseRedirect:
