@@ -80,6 +80,11 @@ def check_user(request: WSGIRequest, user: AbstractUser, slug: str) -> HttpRespo
         messages.error(request, 'Лобби с указанным slug не найдено.')
         return HttpResponseRedirect('main')
 
+    if lobby.bet >= user.balance:
+        messages.error(request, 'Недостаточно TWIM-COIN на балансе для подключения к лобби.')
+        return HttpResponseRedirect(reverse('detail_lobby', args=[slug]))
+
+
 
 def create_player_lobby(user: AbstractUser, slug: str):
     """Присоединение пользователя к лобби"""

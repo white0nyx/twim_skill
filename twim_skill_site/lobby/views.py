@@ -44,6 +44,16 @@ class CreateLobbyPage(View):
         user = request.user
         insufficient_balance = False
         leader = Lobby.objects.filter(leader=user)
+        user_data = get_steam_faceit_user_data(user)
+        user_level = user_data['faceit_user_data']['games'][0]['skill_level']
+        context = {
+            'insufficient_balance': insufficient_balance,
+            'games_types': GameType.objects.all(),
+            'games_modes': GameMode.objects.all(),
+            'vetos': Veto.objects.all(),
+            'pools': Pool.objects.all(),
+            'maps': Map.objects.all(),
+        }
 
         if user.is_authenticated:
             game_type = request.POST.get('game_type')
@@ -56,6 +66,11 @@ class CreateLobbyPage(View):
             max_lvl_enter = request.POST.get('max_lvl_enter') if request.POST.get('max_lvl_enter') else 10
             min_lvl_enter = request.POST.get('min_lvl_enter') if request.POST.get('min_lvl_enter') else 0
             slug = slugify(f"{game_map}-{user.id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
+
+            if user_level < int(min_lvl_enter):
+                messages.error(request, 'Минимальный уровень лобби ниже вашего уровня.')
+                return render(request, 'lobby/create_lobby.html', context)
+
 
             if not leader and user.balance >= bet:
                 lobby = Lobby.objects.create(
@@ -82,15 +97,6 @@ class CreateLobbyPage(View):
                 return redirect('detail_lobby', slug=slug)
             else:
                 insufficient_balance = True
-
-        context = {
-            'insufficient_balance': insufficient_balance,
-            'games_types': GameType.objects.all(),
-            'games_modes': GameMode.objects.all(),
-            'vetos': Veto.objects.all(),
-            'pools': Pool.objects.all(),
-            'maps': Map.objects.all(),
-        }
 
         return render(request, 'lobby/create_lobby.html', context)
 

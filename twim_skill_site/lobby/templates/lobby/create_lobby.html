@@ -1,60 +1,67 @@
 {% extends 'twim_skill_site/templates/base.html' %}
 
 {% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 <form method="post" action="{% url 'create_lobby' %}">
-  {% csrf_token %}
-  <label for="map">Тип игры:</label>
-  <select id="game_type" name="game_type">
-      {% for game_type in games_types %}
-          <option value="{{ game_type.name }}">{{ game_type.name }}</option>
-      {% endfor %}
-  </select><br>
+    {% csrf_token %}
+    <label for="map">Тип игры:</label>
+    <select id="game_type" name="game_type">
+        {% for game_type in games_types %}
+        <option value="{{ game_type.name }}">{{ game_type.name }}</option>
+        {% endfor %}
+    </select><br>
 
-  <label for="map">Режим игры:</label>
-  <select id="game_mode" name="game_mode">
-      {% for game_mode in games_modes %}
-          <option value="{{ game_mode.name }}">{{ game_mode.name }}</option>
-      {% endfor %}
-  </select><br>
+    <label for="map">Режим игры:</label>
+    <select id="game_mode" name="game_mode">
+        {% for game_mode in games_modes %}
+        <option value="{{ game_mode.name }}">{{ game_mode.name }}</option>
+        {% endfor %}
+    </select><br>
 
-  <label for="map">Вето:</label>
-  <select id="veto" name="veto">
-      {% for veto in vetos %}
-          <option value="{{ veto.name }}">{{ veto.name }}</option>
-      {% endfor %}
-  </select><br>
+    <label for="map">Вето:</label>
+    <select id="veto" name="veto">
+        {% for veto in vetos %}
+        <option value="{{ veto.name }}">{{ veto.name }}</option>
+        {% endfor %}
+    </select><br>
 
-  <label for="map">Пул:</label>
-  <select id="pool" name="pool">
-      {% for pool in pools %}
-          <option value="{{ pool.name }}">{{ pool.name }}</option>
-      {% endfor %}
-  </select><br>
+    <label for="map">Пул:</label>
+    <select id="pool" name="pool">
+        {% for pool in pools %}
+        <option value="{{ pool.name }}">{{ pool.name }}</option>
+        {% endfor %}
+    </select><br>
 
-  <label for="map">Карта:</label>
-  <select id="maps" name="maps">
-      {% for map in maps %}
-          <option value="{{ map.name }}">{{ map.name }}</option>
-      {% endfor %}
-  </select><br>
+    <label for="map">Карта:</label>
+    <select id="maps" name="maps">
+        {% for map in maps %}
+        <option value="{{ map.name }}">{{ map.name }}</option>
+        {% endfor %}
+    </select><br>
 
-  <label for="bet">Ставка:</label>
-  <input type="number" id="bet" name="bet" ><br>
+    <label for="bet">Ставка:</label>
+    <input type="number" id="bet" name="bet"><br>
 
-  <label for="password_lobby">Пароль:</label>
-  <input type="number" id="password_lobby" name="password_lobby" ><br>
+    <label for="password_lobby">Пароль:</label>
+    <input type="number" id="password_lobby" name="password_lobby"><br>
 
-  <label for="min_lvl_enter">Минимальный уровень:</label>
-  <input type="number" id="min_lvl_enter" name="min_lvl_enter" ><br>
+    <label for="min_lvl_enter">Минимальный уровень:</label>
+    <input type="number" id="min_lvl_enter" name="min_lvl_enter"><br>
 
-  <label for="max_lvl_enter">Максимальный уровень:</label>
-  <input type="number" id="max_lvl_enter" name="max_lvl_enter" ><br>
+    <label for="max_lvl_enter">Максимальный уровень:</label>
+    <input type="number" id="max_lvl_enter" name="max_lvl_enter"><br>
 
 
-  <input type="submit" value="Создать лобби">
+    <input type="submit" value="Создать лобби">
 
-  {% if insufficient_balance %}
-  <p class="error">Недостаточно средств на балансе.</p>
-  {% endif %}
+    {% if insufficient_balance %}
+    <p class="error">Недостаточно TWIM-COIN на балансе для создания лобби.</p>
+    {% endif %}
 </form>
 {% endblock %}
