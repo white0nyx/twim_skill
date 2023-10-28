@@ -18,6 +18,9 @@ class CreateLobbyPage(View):
     def get(request) -> HttpResponse:
         """Обработчик get-запроса"""
 
+        user = request.user
+        leader = Lobby.objects.filter(leader=user)
+
         context = {
             'games_types': GameType.objects.all(),
             'games_modes': GameMode.objects.all(),
@@ -27,12 +30,19 @@ class CreateLobbyPage(View):
         }
         return render(request, 'lobby/create_lobby.html', context)
 
+        if not leader:
+            return render(request, 'lobby/create_lobby.html')
+        else:
+            messages.error(request, 'У вас уже создано лобби.')
+            return redirect('detail_lobby', slug=leader[0].slug)
+
     @staticmethod
     def post(request) -> HttpResponseRedirect:
         """Обработчик post-запроса создания лобби"""
 
         user = request.user
         insufficient_balance = False
+        leader = Lobby.objects.filter(leader=user)
 
         if user.is_authenticated:
             game_type = request.POST.get('game_type')
@@ -46,7 +56,7 @@ class CreateLobbyPage(View):
             min_lvl_enter = request.POST.get('min_lvl_enter') if request.POST.get('min_lvl_enter') else 0
             slug = slugify(f"{game_map}-{user.id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
 
-            if user.balance >= bet:
+            if not leader and user.balance >= bet:
                 lobby = Lobby.objects.create(
                     leader=user,
                     map=Map.objects.get(name=game_map),
