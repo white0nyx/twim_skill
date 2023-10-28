@@ -91,7 +91,7 @@ class VetoGameModeInfo(models.Model):
 class Game(models.Model):
     """Модель игры"""
 
-    date_start = models.DateTimeField(auto_now_add=True, verbose_name='Дата начала')
+    date_start = models.DateTimeField(null=True, verbose_name='Дата начала')
     date_end = models.DateTimeField(null=True, verbose_name='Дата окончания')
 
     map = models.ForeignKey(Map,
