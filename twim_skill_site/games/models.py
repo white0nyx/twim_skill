@@ -131,13 +131,13 @@ class PlayerStatisticInGame(models.Model):
 # Исправить везде on_delete и related_name
 class Match(models.Model):
     """Модель матча"""
-    game1 = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра 1')
-    game2 = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра 2')
-    game3 = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра 3')
-    game4 = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра 4')
-    game5 = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='+', verbose_name='Игра 5')
-    mode = models.ForeignKey(GameMode, on_delete=models.PROTECT, related_name='+', verbose_name='Режим BEST_OF')
-    veto = models.ForeignKey(Veto, on_delete=models.PROTECT, related_name='+', verbose_name='Вето')
+    game1 = models.ForeignKey(Game, default=None, null=True, on_delete=models.CASCADE, related_name='game1', verbose_name='Игра 1')
+    game2 = models.ForeignKey(Game, default=None, null=True, on_delete=models.CASCADE, related_name='game2', verbose_name='Игра 2')
+    game3 = models.ForeignKey(Game, default=None, null=True, on_delete=models.CASCADE, related_name='game3', verbose_name='Игра 3')
+    game4 = models.ForeignKey(Game, default=None, null=True, on_delete=models.CASCADE, related_name='game4', verbose_name='Игра 4')
+    game5 = models.ForeignKey(Game, default=None, null=True, on_delete=models.CASCADE, related_name='game5', verbose_name='Игра 5')
+    mode = models.ForeignKey(GameMode, on_delete=models.PROTECT, verbose_name='Режим BEST_OF')
+    veto = models.ForeignKey(Veto, on_delete=models.PROTECT, verbose_name='Вето')
 
 
 class PlayerMatchInfo(models.Model):
