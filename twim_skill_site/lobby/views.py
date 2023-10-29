@@ -134,7 +134,8 @@ def leave_f_lobby(request: WSGIRequest) -> HttpResponse:
 class JoinLobby(View):
     """Присоединение к лобби"""
 
-    def get(self, request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
+    @staticmethod
+    def get(request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
 
         # Валидация пользователя для присоединения к лобби
         check_user_for_join_lobby(request, request.user, slug)
@@ -143,7 +144,8 @@ class JoinLobby(View):
 
         return redirect('detail_lobby', slug=slug)
 
-    def post(self, request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
+    @staticmethod
+    def post(request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
 
         # Валидация пользователя для присоединения к лобби
         check_user_for_join_lobby(request, request.user, slug)
