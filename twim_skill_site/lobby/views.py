@@ -10,6 +10,10 @@ from lobby.models import *
 from lobby.services import *
 from users.services import get_steam_faceit_user_data
 
+MINIMAL_BET = 0
+MIN_LEVEL_ENTRE = 0
+MAX_LEVEL_ENTRE = 10
+
 
 class CreateLobbyPage(View):
     """Страница создания лобби"""
@@ -44,8 +48,6 @@ class CreateLobbyPage(View):
         """Обработчик post-запроса создания лобби"""
 
         user = request.user
-        user_data = get_steam_faceit_user_data(user)
-        user_level = user_data['faceit_user_data']['games'][0]['skill_level']
         context = {
             'games_types': GameType.objects.all(),
             'games_modes': GameMode.objects.all(),
@@ -59,24 +61,18 @@ class CreateLobbyPage(View):
         veto = request.POST.get('veto')
         pool = request.POST.get('pool')
         game_map = request.POST.get('maps')
-        bet = Decimal(request.POST.get('bet')) if request.POST.get('bet') else 0
+        bet = Decimal(request.POST.get('bet')) if request.POST.get('bet') else MINIMAL_BET
         password_lobby = request.POST.get('password_lobby')
-        max_lvl_enter = request.POST.get('max_lvl_enter') if request.POST.get('max_lvl_enter') else 10
-        min_lvl_enter = request.POST.get('min_lvl_enter') if request.POST.get('min_lvl_enter') else 0
+        max_lvl_enter = int(request.POST.get('max_lvl_enter') if request.POST.get('max_lvl_enter') else MAX_LEVEL_ENTRE)
+        min_lvl_enter = int(request.POST.get('min_lvl_enter') if request.POST.get('min_lvl_enter') else MIN_LEVEL_ENTRE)
         slug = slugify(f"{game_map}-{user.id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
 
-        if user_level < int(min_lvl_enter):
-            messages.error(request, 'Минимальный уровень лобби ниже вашего уровня.')
+        # Валидация пользователя для создания лобби
+        check_user_for_create_lobby(request, user, min_lvl_enter, max_lvl_enter, bet)
+        if messages.get_messages(request):
             return render(request, 'lobby/create_lobby.html', context)
 
-        if user.balance < bet:
-            messages.error(request, 'Минимальный уровень лобби ниже вашего уровня.')
-            return render(request, 'lobby/create_lobby.html', context)
-
-        if get_player_lobby(user):
-            messages.error(request, 'Вы уже находитесь в другом лобби.')
-            return render(request, 'lobby/create_lobby.html', context)
-
+        # Создание лобби и игр
         lobby = Lobby.objects.create(
             leader=user,
             map=Map.objects.get(name=game_map),
@@ -142,19 +138,20 @@ class JoinLobby(View):
     """Присоединение к лобби"""
 
     def get(self, request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
-        error = check_user(request, request.user, slug)
 
-        if error:
-            return error
+        # Валидация пользователя для присоединения к лобби
+        check_user_for_join_lobby(request, request.user, slug)
+        if not messages.get_messages(request):
+            create_player_lobby(request.user, slug)
 
-        create_player_lobby(request.user, slug)
         return redirect('detail_lobby', slug=slug)
 
     def post(self, request: WSGIRequest, slug: str) -> HttpResponse | HttpResponseRedirect:
-        error = check_user(request, request.user, slug)
 
-        if error:
-            return error
+        # Валидация пользователя для присоединения к лобби
+        check_user_for_join_lobby(request, request.user, slug)
+        if messages.get_messages(request):
+            return redirect('detail_lobby', slug=slug)
 
         lobby = get_lobby_by_slug(slug)
 

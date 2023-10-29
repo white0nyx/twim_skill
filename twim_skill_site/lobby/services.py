@@ -1,6 +1,8 @@
 import logging
 
+from decimal import Decimal
 from django.contrib.auth.models import AbstractUser
+from django.shortcuts import render
 from django.urls import reverse
 from django.contrib import messages
 from django.core.handlers.wsgi import WSGIRequest
@@ -59,7 +61,7 @@ def leave_lobby_with_delete(lobby: PlayerLobby) -> None:
     lobby_to_delete.delete()
 
 
-def check_user(request: WSGIRequest, user: User, slug: str) -> HttpResponseRedirect | None:
+def check_user_for_join_lobby(request: WSGIRequest, user: User, slug: str) -> None:
     """Проверка пользователя перед входом в лобби"""
     lobby = get_lobby_by_slug(slug)
     user_lobby = get_player_lobby(user)
@@ -68,23 +70,35 @@ def check_user(request: WSGIRequest, user: User, slug: str) -> HttpResponseRedir
 
     if not user_level or (user_level < lobby.min_lvl_enter or user_level > lobby.max_lvl_enter):
         messages.error(request, 'Ваш уровень faceit не соответствует условиям лобби.')
-        return HttpResponseRedirect(reverse('detail_lobby', args=[slug]))
 
     if not user.is_authenticated:
         messages.error(request, 'Пройдите авторизацию для присоединения к лобби.')
-        return HttpResponseRedirect('main')
 
     if user_lobby:
         messages.error(request, 'Вы уже находитесь в данном лобби.')
-        return HttpResponseRedirect(reverse('detail_lobby', args=[slug]))
 
     if not lobby:
         messages.error(request, 'Лобби с указанным slug не найдено.')
-        return HttpResponseRedirect('main')
 
     if lobby.bet > user.balance:
         messages.error(request, 'Недостаточно TWIM-COIN на балансе для подключения к лобби.')
-        return HttpResponseRedirect(reverse('detail_lobby', args=[slug]))
+
+
+def check_user_for_create_lobby(request: WSGIRequest, user: User, min_lvl_enter: int, max_lvl_enter: int,
+                                bet: Decimal) -> None:
+    user_level = get_steam_faceit_user_data(user)['faceit_user_data']['games'][0]['skill_level']
+
+    if user_level < int(min_lvl_enter):
+        messages.error(request, 'Минимальный уровень лобби выше вашего уровня.')
+
+    if user_level > int(max_lvl_enter):
+        messages.error(request, 'Максимальный уровень лобби ниже вашего уровня.')
+
+    if user.balance < bet:
+        messages.error(request, 'Недостаточно TWIM-COIN на балансе для создания лобби.')
+
+    if get_player_lobby(user):
+        messages.error(request, 'Вы уже находитесь в другом лобби.')
 
 
 def create_player_lobby(user: AbstractUser, slug: str):
