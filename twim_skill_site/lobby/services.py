@@ -2,11 +2,8 @@ import logging
 
 from decimal import Decimal
 from django.contrib.auth.models import AbstractUser
-from django.shortcuts import render
-from django.urls import reverse
 from django.contrib import messages
 from django.core.handlers.wsgi import WSGIRequest
-from django.http import HttpResponseRedirect
 
 from users.models import User
 from users.services import get_steam_faceit_user_data

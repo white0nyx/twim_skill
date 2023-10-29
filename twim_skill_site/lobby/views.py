@@ -1,11 +1,8 @@
-from decimal import Decimal
-
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
 
 from lobby.forms import LobbyPasswordForm
-from games.models import Map, GameType, GameMode, Veto, Pool
 from lobby.models import *
 from lobby.services import *
 from users.services import get_steam_faceit_user_data
