@@ -30,5 +30,6 @@ class Lobby(models.Model):
 class PlayerLobby(models.Model):
     lobby = models.ForeignKey(Lobby, on_delete=models.CASCADE, related_name='lobby')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users')
+    time_enter = models.DateTimeField(auto_now=True, verbose_name='Время входа')
     team_id = models.IntegerField()
     in_lobby = models.BooleanField()

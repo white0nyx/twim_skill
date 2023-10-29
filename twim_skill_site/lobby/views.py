@@ -86,7 +86,8 @@ class DetailLobbyPage(View):
             'user_data': get_steam_faceit_user_data(user),
             'user_lobby_data': get_user_lobby_data(user),
             'player_in_lobby': get_player_lobby(user),
-            'games': Game.objects.filter(match=lobby.match)
+            'games': Game.objects.filter(match=lobby.match),
+            'players': PlayerLobby.objects.filter(lobby=lobby)
         }
 
         return render(request, 'lobby/detail_lobby.html', context)
