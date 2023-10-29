@@ -1,43 +1,79 @@
 {% extends 'twim_skill_site/templates/base.html' %}
 
 {% block content %}
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-<h1>Детали лобби</h1>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-    <img width="400" height="200" src="{{ lobby.map.image.url }}">
-    <p>Тип: {{ lobby.game_type.name }}</p>
-    <p>Режим: {{ lobby.game_mode.name }}</p>
-    <p>Вето: {{ lobby.veto.name }}</p>
-    <p>Пул: {{ lobby.pool.name }}</p>
-    <p>Карта: {{ lobby.map.name }}</p>
-    <p>Ставка: {{ lobby.bet }}</p>
-    <p>Пароль для лобби: {{ lobby.password_lobby }}</p>
-    <p>Минимальный уровень для входа: {{ lobby.min_lvl_enter }}</p>
-    <p>Максимальный уровень для входа: {{ lobby.max_lvl_enter }}</p>
+<div class="exit">
+    {% if not lobby.password_lobby and not user_lobby_data.user_in_lobby %}
+        <a href="{% url 'join_lobby' slug=lobby.slug %}" class="join-lobby-button">Присоединиться к лобби</a>
+    {% elif lobby.password_lobby and not user_lobby_data.user_in_lobby %}
+        <div>
+            <h2>Введите пароль для лобби:</h2>
+            <form method="post" action="{% url 'join_lobby' slug=lobby.slug %}">
+                {% csrf_token %}
+                <input type="password" name="password" required>
+                <button type="submit">Присоединиться</button>
+            </form>
+        </div>
+    {% elif player_in_lobby.lobby != lobby %}
+    {% else %}
+        <a href="{% url 'leave_f_lobby' %}" class="create-lobby-button">Выйти из лобби</a>
+    {% endif %}
+    <a href="/">На главную</a>
+    </div>
+<div class="main_div">
+    <div class="detail_lobby">
+        <h1>Детали лобби</h1>
 
-<p>Количество игроков в лобби: {{ count_players_in_lobby }}</p>
+        <img width="400" height="200" src="{{ lobby.map.image.url }}">
+        <p>Тип: {{ lobby.game_type.name }}</p>
+        <p>Режим: {{ lobby.game_mode.name }}</p>
+        <p>Вето: {{ lobby.veto.name }}</p>
+        <p>Пул: {{ lobby.pool.name }}</p>
+        <p>Карта: {{ lobby.map.name }}</p>
+        <p>Ставка: {{ lobby.bet }}</p>
+        <p>Пароль для лобби: {{ lobby.password_lobby }}</p>
+        <p>Минимальный уровень для входа: {{ lobby.min_lvl_enter }}</p>
+        <p>Максимальный уровень для входа: {{ lobby.max_lvl_enter }}</p>
+
+        <p>Количество игроков в лобби: {{ count_players_in_lobby }}</p>
+    </div>
+    <div class="match">
+        <h1>Матч</h1>
+        <p>ID Матча: {{ lobby.match.pk }}</p>
+        <p>Тип: {{ lobby.match.type.name }}</p>
+        <p>Режим: {{ lobby.match.mode.name }}</p>
+        <p>Вето: {{ lobby.match.veto.name }}</p>
+    </div>
+    <div class="games">
+        <h1>Игры</h1>
+        <div class="games_items">
+        {% for game in games %}
+            <game>
+            <h3>ИГРА {{ game.pk }}</h3>
+            <p>Дата запуска: {{ game.date_start }}</p>
+            <p>Дата конца: {{ game.date_end }}</p>
+            <p>Карта: {{ game.map.name }}</p>
+            <p>Статус игры: {{ game.status.name }}</p>
+            <p>Матч: {{ game.match }}</p>
+            <br>
+            </game>
+        {% endfor %}
+        </div>
+        <br>
+    </div>
 
 
-{% if not lobby.password_lobby and not user_lobby_data.user_in_lobby %}
-<a href="{% url 'join_lobby' slug=lobby.slug %}" class="join-lobby-button">Присоединиться к лобби</a>
-{% elif lobby.password_lobby and not user_lobby_data.user_in_lobby %}
-<div>
-    <h2>Введите пароль для лобби:</h2>
-    <form method="post" action="{% url 'join_lobby' slug=lobby.slug %}">
-        {% csrf_token %}
-        <input type="password" name="password" required>
-        <button type="submit">Присоединиться</button>
-    </form>
-</div>
-{% elif player_in_lobby.lobby != lobby %}
-{% else %}
-<a href="{% url 'leave_f_lobby' %}" class="create-lobby-button">Выйти из лобби</a>
-{% endif %}
-<a href="/">На главную</a>
+
+
+    </div>
+
 {% endblock %}
+<br>
+<br>

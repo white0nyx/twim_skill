@@ -15,5 +15,11 @@ class PlayersLobbyAdmin(admin.ModelAdmin):
     search_fields = ('lobby__slug', 'user__nickname')
 
 
+@admin.register(Match)
+class MatchAdmin(admin.ModelAdmin):
+    list_display = ('type', 'mode', 'veto')
+    list_filter = ('type', 'mode')
+
+
 class PlayersLobby(admin.ModelAdmin):
     list_display = ('lobby', 'user', 'team_id', 'in_lobby')

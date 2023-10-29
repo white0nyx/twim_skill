@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib import messages
 from django.core.handlers.wsgi import WSGIRequest
 
+from games.models import Map, GameType, GameMode, Veto, Pool, Game, Match, GameStatus
 from users.models import User
 from users.services import get_steam_faceit_user_data
 
@@ -106,3 +107,58 @@ def create_player_lobby(user: AbstractUser, slug: str):
         team_id=1,
         in_lobby=True,
     )
+
+
+def create_match_lobby_and_games(
+        request: WSGIRequest,
+        min_lvl_enter: int,
+        max_lvl_enter: int,
+        bet: Decimal,
+        slug: str) -> None:
+    """Создание матча, лобби и игр"""
+
+    user = request.user
+    game_type = GameType.objects.get(name=request.POST.get('game_type'))
+    game_mode = GameMode.objects.get(name=request.POST.get('game_mode'))
+    veto = Veto.objects.get(name=request.POST.get('veto'))
+    pool = request.POST.get('pool')
+    password_lobby = request.POST.get('password_lobby')
+    game_map = Map.objects.get(name=request.POST.get('maps'))
+
+    match = Match.objects.create(
+        type=game_type,
+        mode=game_mode,
+        veto=veto,
+    )
+
+    lobby = Lobby.objects.create(
+        leader=user,
+        match=match,
+        map=game_map,
+        game_type=game_type,
+        game_mode=game_mode,
+        veto=veto,
+        pool=Pool.objects.get(name=pool),
+        bet=bet,
+        password_lobby=password_lobby,
+        max_lvl_enter=max_lvl_enter,
+        min_lvl_enter=min_lvl_enter,
+        slug=slug,
+    )
+
+    PlayerLobby.objects.create(
+        lobby=lobby,
+        user=user,
+        team_id=1,  # Исправить на метод определения команды
+        in_lobby=True
+    )
+
+    for i in range(int(game_mode.name[-1])):
+        Game.objects.create(
+            date_start=None, date_end=None,
+            map=game_map,
+            status=GameStatus.objects.get(name='preparing'),
+            match=match
+        )
+
+

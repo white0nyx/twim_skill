@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.db import models
 from django.template.defaultfilters import slugify
 
-from games.models import GameType, GameMode, Veto, Pool, Map
+from games.models import GameType, GameMode, Veto, Pool, Map, Match
 from users.models import User
 
 
@@ -19,6 +19,7 @@ class Lobby(models.Model):
     max_lvl_enter = models.IntegerField(null=True, verbose_name='Максимальный уровень для входа')
     min_lvl_enter = models.IntegerField(null=True, verbose_name='Минимальный уровень для входа')
     slug = models.SlugField(unique=True, blank=True, null=True, verbose_name='SLUG')
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, related_name='lobby', verbose_name='Матч')
 
     def save(self, *args, **kwargs):
         if not self.slug:

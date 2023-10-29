@@ -72,3 +72,25 @@ header .empty {
 input, button, select, option {
     color: black;
 }
+
+.main_div {
+    display: flex;
+    flex-direction: row;
+}
+
+.detail_lobby {
+    margin-right: 125px;
+}
+
+.match {
+    margin-right: 125px;
+}
+
+.games_items {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+}
+
+.game {
+    padding: 75px;
+}

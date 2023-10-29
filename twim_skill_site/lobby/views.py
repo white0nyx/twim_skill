@@ -53,13 +53,8 @@ class CreateLobbyPage(View):
             'maps': Map.objects.all(),
         }
 
-        game_type = request.POST.get('game_type')
-        game_mode = request.POST.get('game_mode')
-        veto = request.POST.get('veto')
-        pool = request.POST.get('pool')
         game_map = request.POST.get('maps')
         bet = Decimal(request.POST.get('bet')) if request.POST.get('bet') else MINIMAL_BET
-        password_lobby = request.POST.get('password_lobby')
         max_lvl_enter = int(request.POST.get('max_lvl_enter') if request.POST.get('max_lvl_enter') else MAX_LEVEL_ENTRE)
         min_lvl_enter = int(request.POST.get('min_lvl_enter') if request.POST.get('min_lvl_enter') else MIN_LEVEL_ENTRE)
         slug = slugify(f"{game_map}-{user.id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
@@ -70,26 +65,7 @@ class CreateLobbyPage(View):
             return render(request, 'lobby/create_lobby.html', context)
 
         # Создание лобби и игр
-        lobby = Lobby.objects.create(
-            leader=user,
-            map=Map.objects.get(name=game_map),
-            game_type=GameType.objects.get(name=game_type),
-            game_mode=GameMode.objects.get(name=game_mode),
-            veto=Veto.objects.get(name=veto),
-            pool=Pool.objects.get(name=pool),
-            bet=bet,
-            password_lobby=password_lobby,
-            max_lvl_enter=max_lvl_enter,
-            min_lvl_enter=min_lvl_enter,
-            slug=slug
-        )
-
-        PlayerLobby.objects.create(
-            lobby=lobby,
-            user=user,
-            team_id=1,
-            in_lobby=True
-        )
+        create_match_lobby_and_games(request, min_lvl_enter, max_lvl_enter, bet, slug)
 
         return redirect('detail_lobby', slug=slug)
 
@@ -109,7 +85,8 @@ class DetailLobbyPage(View):
             'count_players_in_lobby': count_players_in_lobby,
             'user_data': get_steam_faceit_user_data(user),
             'user_lobby_data': get_user_lobby_data(user),
-            'player_in_lobby': get_player_lobby(user)
+            'player_in_lobby': get_player_lobby(user),
+            'games': Game.objects.filter(match=lobby.match)
         }
 
         return render(request, 'lobby/detail_lobby.html', context)
