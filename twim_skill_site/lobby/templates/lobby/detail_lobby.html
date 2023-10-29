@@ -24,7 +24,7 @@
 <p>Количество игроков в лобби: {{ count_players_in_lobby }}</p>
 
 
-{% if not lobby.password_lobby and not user_lobby_data.user_in_lobby%}
+{% if not lobby.password_lobby and not user_lobby_data.user_in_lobby %}
 <a href="{% url 'join_lobby' slug=lobby.slug %}" class="join-lobby-button">Присоединиться к лобби</a>
 {% elif lobby.password_lobby and not user_lobby_data.user_in_lobby %}
 <div>
@@ -35,6 +35,7 @@
         <button type="submit">Присоединиться</button>
     </form>
 </div>
+{% elif player_in_lobby.lobby != lobby %}
 {% else %}
 <a href="{% url 'leave_f_lobby' %}" class="create-lobby-button">Выйти из лобби</a>
 {% endif %}

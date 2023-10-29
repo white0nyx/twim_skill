@@ -99,16 +99,17 @@ class DetailLobbyPage(View):
 
     @staticmethod
     def get(request: WSGIRequest, slug: str) -> HttpResponse:
+        user = request.user
         lobby = Lobby.objects.get(slug=slug)
         count_players_in_lobby = PlayerLobby.objects.filter(lobby=lobby, in_lobby=True).count()
 
-        user = request.user
         context = {
             'title': f'Лобби №{lobby.pk}',
             'lobby': lobby,
             'count_players_in_lobby': count_players_in_lobby,
             'user_data': get_steam_faceit_user_data(user),
-            'user_lobby_data': get_user_lobby_data(user)
+            'user_lobby_data': get_user_lobby_data(user),
+            'player_in_lobby': get_player_lobby(user)
         }
 
         return render(request, 'lobby/detail_lobby.html', context)
