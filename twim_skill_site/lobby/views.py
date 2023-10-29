@@ -96,7 +96,7 @@ class CreateLobbyPage(View):
 
                 return redirect('detail_lobby', slug=slug)
             else:
-                insufficient_balance = True
+                context['insufficient_balance'] = True
 
         return render(request, 'lobby/create_lobby.html', context)
 
