@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.contrib import messages
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponseRedirect
+
+from users.models import User
 from users.services import get_steam_faceit_user_data
 
 from lobby.models import PlayerLobby, Lobby
@@ -57,7 +59,7 @@ def leave_lobby_with_delete(lobby: PlayerLobby) -> None:
     lobby_to_delete.delete()
 
 
-def check_user(request: WSGIRequest, user: AbstractUser, slug: str) -> HttpResponseRedirect | None:
+def check_user(request: WSGIRequest, user: User, slug: str) -> HttpResponseRedirect | None:
     """Проверка пользователя перед входом в лобби"""
     lobby = get_lobby_by_slug(slug)
     user_lobby = get_player_lobby(user)
@@ -80,10 +82,9 @@ def check_user(request: WSGIRequest, user: AbstractUser, slug: str) -> HttpRespo
         messages.error(request, 'Лобби с указанным slug не найдено.')
         return HttpResponseRedirect('main')
 
-    if lobby.bet >= user.balance:
+    if lobby.bet > user.balance:
         messages.error(request, 'Недостаточно TWIM-COIN на балансе для подключения к лобби.')
         return HttpResponseRedirect(reverse('detail_lobby', args=[slug]))
-
 
 
 def create_player_lobby(user: AbstractUser, slug: str):
