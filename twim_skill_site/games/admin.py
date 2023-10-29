@@ -53,7 +53,7 @@ class GameAdmin(admin.ModelAdmin):
     search_fields = ('lobby',)
 
 
-@admin.register(PlayerMatchInfo)
+@admin.register(PlayerGameInfo)
 class PlayerGameInfoAdmin(admin.ModelAdmin):
     list_display = ('pk', 'game', 'user')
     list_filter = ('game', 'user',)

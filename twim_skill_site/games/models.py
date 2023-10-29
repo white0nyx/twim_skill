@@ -88,6 +88,16 @@ class VetoGameModeInfo(models.Model):
                              verbose_name='Вето')
 
 
+# <------------------ МАТЧИ ------------------>
+
+# Исправить везде on_delete и related_name
+class Match(models.Model):
+    """Модель матча"""
+    type = models.ForeignKey(GameType, on_delete=models.PROTECT, verbose_name='Тип игры')
+    mode = models.ForeignKey(GameMode, on_delete=models.PROTECT, verbose_name='Режим BEST_OF')
+    veto = models.ForeignKey(Veto, on_delete=models.PROTECT, verbose_name='Вето')
+
+
 class Game(models.Model):
     """Модель игры"""
 
@@ -106,6 +116,8 @@ class Game(models.Model):
                                related_name='game',
                                db_index=True,
                                verbose_name='Статус')
+
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, verbose_name='Матч')
 
     def __str__(self):
         return f'Игра_{self.pk}'
@@ -126,21 +138,7 @@ class PlayerStatisticInGame(models.Model):
     five_kills = models.PositiveSmallIntegerField(default=0, verbose_name='Количество пятерных убийств')
 
 
-# <------------------ МАТЧИ ------------------>
-
-# Исправить везде on_delete и related_name
-class Match(models.Model):
-    """Модель матча"""
-    game1 = models.ForeignKey(Game, default=None, null=True, on_delete=models.CASCADE, related_name='game1', verbose_name='Игра 1')
-    game2 = models.ForeignKey(Game, default=None, null=True, on_delete=models.CASCADE, related_name='game2', verbose_name='Игра 2')
-    game3 = models.ForeignKey(Game, default=None, null=True, on_delete=models.CASCADE, related_name='game3', verbose_name='Игра 3')
-    game4 = models.ForeignKey(Game, default=None, null=True, on_delete=models.CASCADE, related_name='game4', verbose_name='Игра 4')
-    game5 = models.ForeignKey(Game, default=None, null=True, on_delete=models.CASCADE, related_name='game5', verbose_name='Игра 5')
-    mode = models.ForeignKey(GameMode, on_delete=models.PROTECT, verbose_name='Режим BEST_OF')
-    veto = models.ForeignKey(Veto, on_delete=models.PROTECT, verbose_name='Вето')
-
-
-class PlayerMatchInfo(models.Model):
+class PlayerGameInfo(models.Model):
     """Модель записи игрока матча"""
 
     game = models.ForeignKey(Game,
