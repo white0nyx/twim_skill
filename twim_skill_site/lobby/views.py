@@ -99,19 +99,19 @@ class DetailLobbyPage(View):
         return render(request, 'lobby/detail_lobby.html', context)
 
 
-def leave_f_lobby(request: WSGIRequest) -> HttpResponse:
+def leave_lobby(request: WSGIRequest) -> HttpResponse:
     """Покинуть лобби"""
 
     user = request.user
     if user.is_authenticated:
 
         # Определяем в каком лобби пользователь
-        lobby = get_player_lobby(user)
+        player_lobby = get_player_lobby(user)
 
-        if get_count_players_in_lobby(lobby) <= 1:
-            leave_lobby_with_delete(lobby)
+        if get_count_players_in_lobby(player_lobby) <= 1:
+            leave_lobby_with_delete(player_lobby)
         else:
-            leave_lobby(lobby)
+            leave_lobby(player_lobby)
 
         return redirect('main')
 

@@ -52,11 +52,20 @@ def leave_lobby(lobby: PlayerLobby) -> None:
     lobby.save()
 
 
-def leave_lobby_with_delete(lobby: PlayerLobby) -> None:
+def delete_match_and_games(match: Match) -> None:
+    """Удалить матч и игры, принадлежащие ему"""
+    for game in Game.objects.filter(match=match):
+        game.delete()
+
+    match.delete()
+
+
+def leave_lobby_with_delete(player_lobby: PlayerLobby) -> None:
     """Покинуть лобби с его удалением"""
-    lobby_to_delete = lobby.lobby
-    lobby.delete()
+    lobby_to_delete = player_lobby.lobby
+    player_lobby.delete()
     lobby_to_delete.delete()
+    delete_match_and_games(lobby_to_delete.match)
 
 
 def check_user_for_join_lobby(request: WSGIRequest, user: User, slug: str) -> None:
@@ -160,5 +169,3 @@ def create_match_lobby_and_games(
             status=GameStatus.objects.get(name='preparing'),
             match=match
         )
-
-
