@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
@@ -90,7 +92,7 @@ class DetailLobbyPage(View):
             'user_data': get_steam_faceit_user_data(user),
             'user_lobby_data': get_user_lobby_data(user),
             'player_in_lobby': get_player_lobby(user),
-            'games': Game.objects.filter(match=lobby.match),
+            'games': Game.objects.filter(match=lobby.match).order_by('pk'),
             'players': PlayerLobby.objects.filter(lobby=lobby)
         }
 
@@ -152,9 +154,18 @@ class JoinLobby(View):
 
 @csrf_exempt
 def game_action(request):
+    """Изменение статуса игры"""
     if request.method == 'POST':
         game_id = request.POST.get('game_id', None)
-        game_action = request.POST.get('game_action', None)
-        print(game_id, game_action)
-        # Здесь ваш код для начала или завершения игры
+        new_game_status = request.POST.get('game_status', None)
+        game = Game.objects.get(pk=game_id)
+
+        if new_game_status == 'running':
+            game.date_start = datetime.datetime.now()
+
+        elif new_game_status == 'finished':
+            game.date_end = datetime.datetime.now()
+
+        game.status = GameStatus.objects.get(name=new_game_status)
+        game.save()
         return redirect(request.META['HTTP_REFERER'])
