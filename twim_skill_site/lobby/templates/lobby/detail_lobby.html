@@ -70,9 +70,12 @@
                     <p>Карта: {{ game.map.name }}</p>
                     <p>Статус игры: {{ game.status.name }}</p>
                     <p>Матч: {{ game.match }}</p>
-                    <button>Начать матч</button>
-                    <br>
-                    <button>Завершить матч</button>
+                    <form method="post" action="{% url 'game_action' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="game_id" value="{{ game.id }}">
+                    <button type="submit" name="game_action" value="start">Начать</button>
+                    <button type="submit" name="game_action" value="end">Завершить</button>
+                    </form>
                     <br>
                 </game>
             {% endfor %}

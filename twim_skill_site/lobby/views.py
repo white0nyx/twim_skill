@@ -2,6 +2,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
 
+from django.views.decorators.csrf import csrf_exempt
+
 from lobby.forms import LobbyPasswordForm
 from lobby.models import *
 from lobby.services import *
@@ -43,6 +45,8 @@ class CreateLobbyPage(View):
     @staticmethod
     def post(request) -> HttpResponseRedirect:
         """Обработчик post-запроса создания лобби"""
+
+        print(request.POST)
 
         user = request.user
         context = {
@@ -144,3 +148,13 @@ class JoinLobby(View):
                 return redirect('detail_lobby', slug=slug)
 
         return redirect('detail_lobby', slug=slug)
+
+
+@csrf_exempt
+def game_action(request):
+    if request.method == 'POST':
+        game_id = request.POST.get('game_id', None)
+        game_action = request.POST.get('game_action', None)
+        print(game_id, game_action)
+        # Здесь ваш код для начала или завершения игры
+        return redirect(request.META['HTTP_REFERER'])
