@@ -54,8 +54,7 @@
         <h1>Игроки</h1>
 
         {% for player in players %}
-            <p>{% if player.user == lobby.leader  %} ♔ {% endif %} {{ player.user.username }} | LVL: {{ player.user.experience }} |
-            </p>
+            <p>{% if player.user == lobby.leader  %} ♔ {% endif %} {{ player.user.username }} | LVL: {{ player.user.experience }}</p>
         {% endfor %}
 
         </div>
@@ -64,9 +63,9 @@
         <div class="games_items">
             {% for game in games %}
                 <game>
-                    <h3>ИГРА {{ game.pk }}</h3>
-                    <p>Дата запуска: {{ game.date_start|date:"d.m.Y H:i" }}</p>
-                    <p>Дата конца: {{ game.date_end|date:"d.m.Y H:i" }}</p>
+                    <h3>ИГРА {{ forloop.counter }}</h3>
+                    <p>Запуск: {{ game.date_start|date:"d.m.Y H:i" }}</p>
+                    <p>Конец: {{ game.date_end|date:"d.m.Y H:i" }}</p>
                     <p>Карта: {{ game.map.name }}</p>
                     <p>Статус игры: {{ game.status.name }}</p>
                     <p>Матч: {{ game.match }}</p>
