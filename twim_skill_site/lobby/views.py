@@ -99,7 +99,7 @@ class DetailLobbyPage(View):
         return render(request, 'lobby/detail_lobby.html', context)
 
 
-def leave_lobby(request: WSGIRequest) -> HttpResponse:
+def leave_from_lobby(request: WSGIRequest) -> HttpResponse:
     """Покинуть лобби"""
 
     user = request.user
