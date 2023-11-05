@@ -67,6 +67,16 @@ def leave_lobby_with_delete(player_lobby: PlayerLobby) -> None:
     lobby_to_delete.delete()
     delete_match_and_games(lobby_to_delete.match)
 
+def get_players_lobby_sorted_by_time(lobby: Lobby) -> list:
+    """Получить список всех участников лобби, отсортированных по времени входа"""
+    players = (
+        PlayerLobby.objects
+        .filter(lobby=lobby, in_lobby=True)
+        .order_by('time_enter')
+        .select_related('user')
+    )
+    return list(players)
+
 
 def check_user_for_join_lobby(request: WSGIRequest, user: User, slug: str) -> None:
     """Проверка пользователя перед входом в лобби"""

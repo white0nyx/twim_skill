@@ -48,8 +48,6 @@ class CreateLobbyPage(View):
     def post(request) -> HttpResponseRedirect:
         """Обработчик post-запроса создания лобби"""
 
-        print(request.POST)
-
         user = request.user
         context = {
             'games_types': GameType.objects.all(),
@@ -93,7 +91,7 @@ class DetailLobbyPage(View):
             'user_lobby_data': get_user_lobby_data(user),
             'player_in_lobby': get_player_lobby(user),
             'games': Game.objects.filter(match=lobby.match).order_by('pk'),
-            'players': PlayerLobby.objects.filter(lobby=lobby)
+            'players': PlayerLobby.objects.filter(lobby=lobby, in_lobby=True)
         }
 
         return render(request, 'lobby/detail_lobby.html', context)
@@ -103,17 +101,24 @@ def leave_from_lobby(request: WSGIRequest) -> HttpResponse:
     """Покинуть лобби"""
 
     user = request.user
-    if user.is_authenticated:
 
-        # Определяем в каком лобби пользователь
-        player_lobby = get_player_lobby(user)
+    player_lobby = get_player_lobby(user)
+    lobby = player_lobby.lobby
 
-        if get_count_players_in_lobby(player_lobby) <= 1:
-            leave_lobby_with_delete(player_lobby)
-        else:
+    if lobby.leader == user:
+        players = get_players_lobby_sorted_by_time(lobby)
+        if len(players) > 1:
+            new_leader = players[1].user
+            lobby.leader = new_leader
+            lobby.save()
             leave_lobby(player_lobby)
+        else:
+            leave_lobby_with_delete(player_lobby)
+            return redirect('main')
+    else:
+        leave_lobby(player_lobby)
 
-        return redirect('main')
+    return redirect('main')
 
 
 class JoinLobby(View):

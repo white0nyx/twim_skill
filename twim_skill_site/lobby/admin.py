@@ -10,8 +10,8 @@ class LobbyAdmin(admin.ModelAdmin):
 
 @admin.register(PlayerLobby)
 class PlayersLobbyAdmin(admin.ModelAdmin):
-    list_display = ('lobby', 'user', 'team_id', 'in_lobby')
-    list_filter = ('team_id', 'in_lobby')
+    list_display = ('lobby', 'user', 'team_id', 'in_lobby', 'time_enter')
+    list_filter = ('team_id', 'in_lobby', 'time_enter')
     search_fields = ('lobby__slug', 'user__nickname')
 
 
