@@ -90,6 +90,7 @@
                     <p>Карта: {{ game.map.name }}</p>
                     <p>Статус игры: {{ game.status.name }}</p>
                     <p>Матч: {{ game.match }}</p>
+                    {% if player_in_lobby.user == lobby.leader %}
                     <form method="post" action="{% url 'game_action' %}">
                         {% csrf_token %}
                         <input type="hidden" name="game_id" value="{{ game.id }}">
@@ -100,6 +101,7 @@
                         {% elif game.status.name == 'finished' %}
                         <p>Игра завершилась</p>
                         {% endif %}
+                    {% endif %}
                     </form>
                     <br>
                 </game>
