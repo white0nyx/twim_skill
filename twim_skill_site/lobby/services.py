@@ -123,7 +123,7 @@ def create_player_lobby(user: AbstractUser, slug: str):
     PlayerLobby.objects.create(
         lobby=Lobby.objects.get(slug=slug),
         user=user,
-        team_id=1,
+        team_id=0,
         in_lobby=True,
     )
 
@@ -168,7 +168,7 @@ def create_match_lobby_and_games(
     PlayerLobby.objects.create(
         lobby=lobby,
         user=user,
-        team_id=1,  # Исправить на метод определения команды
+        team_id=0,  # Исправить на метод определения команды
         in_lobby=True
     )
 

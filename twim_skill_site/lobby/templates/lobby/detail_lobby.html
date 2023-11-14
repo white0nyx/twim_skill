@@ -51,11 +51,32 @@
         <p>Режим: {{ lobby.match.mode.name }}</p>
         <p>Вето: {{ lobby.match.veto.name }}</p>
         <br><br><br><br><br>
-        <h1>Игроки</h1>
 
-        {% for player in players %}
-            <p>{% if player.user == lobby.leader  %} ♔ {% endif %} {{ player.user.username }} | LVL: {{ player.user.experience }}</p>
-        {% endfor %}
+        <form method="post" action="{% url 'join_team' %}">
+            {% csrf_token %}
+            <div>
+                <h1>Команда1</h1>
+                {% for player in players %}
+                {% if player.team_id == 1 %}
+                <p>{% if player.user == lobby.leader %} ♔ {% endif %} {{ player.user.username }} | LVL: {{ player.user.experience }} {% endif %}</p>
+                {% endfor %}
+                <input type="hidden" name="team_id" value="1">
+                <button type="submit">+</button>
+            </div>
+        </form>
+
+        <form method="post" action="{% url 'join_team' %}">
+            {% csrf_token %}
+            <div>
+                <h1>Команда2</h1>
+                {% for player in players %}
+                {% if player.team_id == 2 %}
+                <p>{% if player.user == lobby.leader %} ♔ {% endif %} {{ player.user.username }} | LVL: {{ player.user.experience }} {% endif %}</p>
+                    {% endfor %}
+                <input type="hidden" name="team_id" value="2">
+                <button type="submit">+</button>
+            </div>
+        </form>
 
         </div>
     <div class="games">

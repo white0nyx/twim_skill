@@ -8,4 +8,5 @@ urlpatterns = [
     path('detail_lobby/<slug:slug>/', DetailLobbyPage.as_view(), name='detail_lobby'),
     path('join_lobby/<slug:slug>/', JoinLobby.as_view(), name='join_lobby'),
     path('game_action/', game_action, name='game_action'),
+    path('join_team/', join_team, name='join_team'),
 ]

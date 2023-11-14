@@ -174,3 +174,14 @@ def game_action(request):
         game.status = GameStatus.objects.get(name=new_game_status)
         game.save()
         return redirect(request.META['HTTP_REFERER'])
+
+def join_team(request):
+    if request.method == 'POST':
+        user = request.user
+        team_id = request.POST.get('team_id')
+
+        player_lobby = get_player_lobby(user)
+        player_lobby.team_id = team_id
+        player_lobby.save()
+
+    return redirect(request.META['HTTP_REFERER'])
