@@ -82,6 +82,12 @@ class DetailLobbyPage(View):
         user = request.user
         lobby = Lobby.objects.get(slug=slug)
         count_players_in_lobby = PlayerLobby.objects.filter(lobby=lobby, in_lobby=True).count()
+        player_lobby = get_player_lobby(user)
+
+        if lobby.leader == user:
+            player_lobby.team_id = 1
+            player_lobby.save()
+
 
         context = {
             'title': f'Лобби №{lobby.pk}',

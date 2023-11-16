@@ -61,7 +61,9 @@
                 <p>{% if player.user == lobby.leader %} ♔ {% endif %} {{ player.user.username }} | LVL: {{ player.user.experience }} {% endif %}</p>
                 {% endfor %}
                 <input type="hidden" name="team_id" value="1">
+                {% if user_lobby_data.user_in_lobby %}
                 <button type="submit">+</button>
+                {% endif %}
             </div>
         </form>
 
@@ -72,9 +74,11 @@
                 {% for player in players %}
                 {% if player.team_id == 2 %}
                 <p>{% if player.user == lobby.leader %} ♔ {% endif %} {{ player.user.username }} | LVL: {{ player.user.experience }} {% endif %}</p>
-                    {% endfor %}
+                {% endfor %}
                 <input type="hidden" name="team_id" value="2">
+                {% if user_lobby_data.user_in_lobby %}
                 <button type="submit">+</button>
+                {% endif %}
             </div>
         </form>
 
