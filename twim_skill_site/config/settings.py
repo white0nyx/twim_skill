@@ -57,6 +57,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.steam',
+
+    # REST Framework
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
