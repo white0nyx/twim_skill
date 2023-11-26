@@ -52,35 +52,22 @@
         <p>Вето: {{ lobby.match.veto.name }}</p>
         <br><br><br><br><br>
 
+        {% for team_id in teams %}
         <form method="post" action="{% url 'join_team' %}">
             {% csrf_token %}
             <div>
-                <h1>Команда1</h1>
+                <h1>Команда {{ team_id }}</h1>
                 {% for player in players %}
-                {% if player.team_id == 1 %}
+                {% if player.team_id == team_id %}
                 <p>{% if player.user == lobby.leader %} ♔ {% endif %} {{ player.user.username }} | LVL: {{ player.user.experience }} {% endif %}</p>
                 {% endfor %}
-                <input type="hidden" name="team_id" value="1">
+                <input type="hidden" name="team_id" value="{{ team_id }}">
                 {% if user_lobby_data.user_in_lobby %}
                 <button type="submit">+</button>
                 {% endif %}
             </div>
         </form>
-
-        <form method="post" action="{% url 'join_team' %}">
-            {% csrf_token %}
-            <div>
-                <h1>Команда2</h1>
-                {% for player in players %}
-                {% if player.team_id == 2 %}
-                <p>{% if player.user == lobby.leader %} ♔ {% endif %} {{ player.user.username }} | LVL: {{ player.user.experience }} {% endif %}</p>
-                {% endfor %}
-                <input type="hidden" name="team_id" value="2">
-                {% if user_lobby_data.user_in_lobby %}
-                <button type="submit">+</button>
-                {% endif %}
-            </div>
-        </form>
+        {% endfor %}
 
         </div>
     <div class="games">
