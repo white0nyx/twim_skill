@@ -219,3 +219,10 @@ LOGGING = {
 # Используемая модель пользователя
 AUTH_USER_MODEL = 'users.User'
 
+# Настройки REST FRAMEWORK
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',  # Закомментировать, чтобы убрать интерфейсы
+    ]
+}
