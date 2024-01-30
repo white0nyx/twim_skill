@@ -3,11 +3,13 @@ import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
-
 from django.views.decorators.csrf import csrf_exempt
+
+from rest_framework import generics
 
 from lobby.forms import LobbyPasswordForm
 from lobby.models import *
+from lobby.serializers import LobbySerializer
 from lobby.services import *
 from users.services import get_steam_faceit_user_data
 
@@ -87,7 +89,6 @@ class DetailLobbyPage(View):
         if lobby.leader == user:
             player_lobby.team_id = 1
             player_lobby.save()
-
 
         context = {
             'title': f'Лобби №{lobby.pk}',
@@ -181,6 +182,7 @@ def game_action(request):
         game.save()
         return redirect(request.META['HTTP_REFERER'])
 
+
 def join_team(request):
     if request.method == 'POST':
         user = request.user
@@ -191,3 +193,8 @@ def join_team(request):
         player_lobby.save()
 
     return redirect(request.META['HTTP_REFERER'])
+
+
+class LobbyAPIView(generics.ListAPIView):
+    queryset = Lobby.objects.all()
+    serializer_class = LobbySerializer
