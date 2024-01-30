@@ -85,6 +85,7 @@ class DetailLobbyPage(View):
         lobby = Lobby.objects.get(slug=slug)
         count_players_in_lobby = PlayerLobby.objects.filter(lobby=lobby, in_lobby=True).count()
         player_lobby = get_player_lobby(user)
+        teams = (1, 2)
 
         if lobby.leader == user:
             player_lobby.team_id = 1
@@ -98,7 +99,8 @@ class DetailLobbyPage(View):
             'user_lobby_data': get_user_lobby_data(user),
             'player_in_lobby': get_player_lobby(user),
             'games': Game.objects.filter(match=lobby.match).order_by('pk'),
-            'players': PlayerLobby.objects.filter(lobby=lobby, in_lobby=True)
+            'players': PlayerLobby.objects.filter(lobby=lobby, in_lobby=True),
+            'teams': teams,
         }
 
         return render(request, 'lobby/detail_lobby.html', context)
