@@ -73,6 +73,7 @@
             {% for game in games %}
                 <game>
                     <h3>ИГРА {{ forloop.counter }}</h3>
+                    <p>ID: {{ game.pk}}</p>
                     <p>Запуск: {{ game.date_start|date:"d.m.Y H:i" }}</p>
                     <p>Конец: {{ game.date_end|date:"d.m.Y H:i" }}</p>
                     <p>Карта: {{ game.map.name }}</p>
