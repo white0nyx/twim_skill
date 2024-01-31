@@ -1,5 +1,5 @@
 {% extends 'twim_skill_site/templates/base.html' %}
-
+{% load templatetags %}
 {% block content %}
     {% if messages %}
         <ul class="messages">
@@ -42,66 +42,134 @@
             <p>Количество игроков в лобби: {{ count_players_in_lobby }}</p>
         </div>
         <div class="match_and_players">
-        <h1>Матч</h1>
-        <p>ID Матча: {{ lobby.match.pk }}</p>
-        <p>Тип: {{ lobby.match.type.name }}</p>
-        <p>Режим: {{ lobby.match.mode.name }}</p>
-        <p>Вето: {{ lobby.match.veto.name }}</p>
-        <br><br><br><br><br>
+            <h1>Матч</h1>
+            <p>ID Матча: {{ lobby.match.pk }}</p>
+            <p>Тип: {{ lobby.match.type.name }}</p>
+            <p>Режим: {{ lobby.match.mode.name }}</p>
+            <p>Вето: {{ lobby.match.veto.name }}</p>
+            <br><br><br><br><br>
 
-        {% for team_id in teams %}
-        <form method="post" action="{% url 'join_team' %}">
-            {% csrf_token %}
-            <div>
-                <h1>Команда {{ team_id }}</h1>
-                {% for player in players %}
-                {% if player.team_id == team_id %}
-                <p>{% if player.user == lobby.leader %} ♔ {% endif %} {{ player.user.username }} | LVL: {{ player.user.experience }} {% endif %}</p>
-                {% endfor %}
-                <input type="hidden" name="team_id" value="{{ team_id }}">
-                {% if user_lobby_data.user_in_lobby %}
-                <button type="submit">+</button>
-                {% endif %}
-            </div>
-        </form>
-        {% endfor %}
-
-        </div>
-    <div class="games">
-        <h1>Игры</h1>
-        <div class="games_items">
-            {% for game in games %}
-                <game>
-                    <h3>ИГРА {{ forloop.counter }}</h3>
-                    <p>ID: {{ game.pk}}</p>
-                    <p>Запуск: {{ game.date_start|date:"d.m.Y H:i" }}</p>
-                    <p>Конец: {{ game.date_end|date:"d.m.Y H:i" }}</p>
-                    <p>Карта: {{ game.map.name }}</p>
-                    <p>Статус игры: {{ game.status.name }}</p>
-                    <p>Матч: {{ game.match }}</p>
-                    {% if player_in_lobby.user == lobby.leader %}
-                    <form method="post" action="{% url 'game_action' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="game_id" value="{{ game.id }}">
-                        {% if game.status.name == 'preparing' %}
-                        <button type="submit" name="game_status" value="running">Начать</button>
-                        {% elif game.status.name == 'running' %}
-                        <button type="submit" name="game_status" value="finished">Завершить</button>
-                        {% elif game.status.name == 'finished' %}
-                        <p>Игра завершилась</p>
+            {% for team_id in teams %}
+                <form method="post" action="{% url 'join_team' %}">
+                    {% csrf_token %}
+                    <div>
+                        <h1>Команда {{ team_id }}</h1>
+                        {% for player in players %}
+                            {% if player.team_id == team_id %}
+                                <p>{% if player.user == lobby.leader %} ♔ {% endif %} {{ player.user.username }} | LVL:
+                                {{ player.user.experience }} {% endif %}</p>
+                        {% endfor %}
+                        <input type="hidden" name="team_id" value="{{ team_id }}">
+                        {% if user_lobby_data.user_in_lobby %}
+                            <button type="submit">+</button>
                         {% endif %}
-                    {% endif %}
-                    </form>
-                    <br>
-                </game>
+                    </div>
+                </form>
             {% endfor %}
+
         </div>
-        <br>
-    </div></div>
+        <div class="games">
+            <h1>Игры</h1>
+            <div class="games_items">
+                {% for game in games %}
+                    <game>
+                        <h3>ИГРА {{ forloop.counter }}</h3>
+                        <p>ID: {{ game.pk }}</p>
+                        <p>Запуск: {{ game.date_start|date:"d.m.Y H:i" }}</p>
+                        <p>Конец: {{ game.date_end|date:"d.m.Y H:i" }}</p>
+                        <p>Карта: {{ game.map.name }}</p>
+                        <p>Статус игры: {{ game.status.pk }} {{ game.status.name }}</p>
+                        <p>Матч: {{ game.match }}</p>
+                        {% if player_in_lobby.user == lobby.leader %}
+                            <button {% if game.status.name == "finished" %}disabled{% endif %}
+                                    class="gameControlButton" type="button"
+                                    data-pk="{{ game.pk }}"
+                                    {% if game.date_start %}
+                                    data-date_start="{{ game.date_start|iso_format }}"
+                                    {% else %}
+                                    data-date_start="{{ game.date_start|date:"d.m.Y H:i" }}"
+                                    {% endif %}
+                                    data-date_end="{{ game.date_end|date:"d.m.Y H:i" }}"
+                                    data-map="{{ game.map.pk }}"
+                                    data-status="{{ game.status.name }}"
+                                    data-match="{{ game.match.pk }}"
+                                    data-url="{% url 'game_update' pk=0 %}">
+                                    {% if game.status.name == "preparing" %}
+                                        Начать
+                                    {% elif game.status.name == "running"  %}
+                                        Завершить
+                                    {% else %}
+                                        Игра завершена
+                                    {% endif %}
+
+
+                            </button>
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                        {% endif %}
+                        <br>
+                    </game>
+                {% endfor %}
+            </div>
+            <br>
+        </div>
+    </div>
 
 
 
+    <script>
+        $(".gameControlButton").click(function () {
+            var gamePk = $(this).data('pk');
+            var gameDateStart = $(this).data('date_start');
+            var gameDateEnd = $(this).data('date_end');
+            var gameMap = $(this).data('map');
+            var gameStatus = $(this).data('status');
+            var gameMatch = $(this).data('match');
+            var url = $(this).data('url').replace('0', gamePk);
+            var nextButtonText = "";
 
+            var gameStatusPk = 1;
+            if (gameStatus === "preparing") {
+                gameStatusPk = 2;
+                nextButtonText = "Завершить";
+
+            } else if (gameStatus === "running") {
+                gameStatusPk = 3;
+
+            }
+
+            if (gameDateStart) {
+                gameDateEnd = new Date().toISOString();
+                console.log(gamePk, gameDateStart, gameDateEnd, gameMap, gameStatusPk, gameStatus, gameMatch);
+
+            } else {
+                gameDateStart = new Date().toISOString();
+            }
+            $.ajax({
+                url: url,
+                type: 'PUT',
+                headers: {"X-CSRFToken": "{{ csrf_token }}"},
+                data: {
+                    "pk": gamePk,
+                    "date_start": gameDateStart,
+                    "date_end": gameDateEnd,
+                    "map": gameMap,
+                    "status": gameStatusPk,
+                    "match": gameMatch
+                },
+                success: function (result) {
+                    console.log(result);
+                }
+            });
+
+
+            if (nextButtonText) {
+                $(this).text(nextButtonText);
+            } else {
+                $(this).prop('disabled', true);
+                $(this).text("Игра завершена");
+            }
+        });
+    </script>
 
 {% endblock %}
 <br>
