@@ -13,6 +13,7 @@ urlpatterns = [
     path('', include('base.urls')),
     path('', include('lobby.urls')),
     path('', include('games.urls')),
+    path('', include('users.urls')),
 ]
 
 # URL для социальных сетей. В частности Steam.
