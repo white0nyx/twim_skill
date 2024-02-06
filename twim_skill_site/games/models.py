@@ -103,8 +103,8 @@ class Match(models.Model):
 
 class PlayerMatch(models.Model):
     """Модель игроки матч"""
-    match = models.ForeignKey(Match, on_delete=models.PROTECT, related_name='match', verbose_name='Матч')
-    user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='users', verbose_name='Пользователь')
+    match = models.ForeignKey(Match, on_delete=models.PROTECT, verbose_name='Матч')
+    user = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Пользователь')
     team_id = models.IntegerField(verbose_name='Команда')
 
 
