@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.db import models
 from django.template.defaultfilters import slugify
 
-from games.models import GameType, GameMode, Veto, Pool, Map, Match
+from games.models import Match
 from users.models import User
 
 
