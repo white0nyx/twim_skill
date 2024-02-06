@@ -27,6 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', include('base.urls')),
     path('', include('lobby.urls')),
+    path('', include('games.urls')),
 ]
 
 # URL для социальных сетей. В частности Steam.
