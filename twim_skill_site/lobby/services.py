@@ -4,8 +4,9 @@ from decimal import Decimal
 from django.contrib.auth.models import AbstractUser
 from django.contrib import messages
 from django.core.handlers.wsgi import WSGIRequest
+from django.utils import timezone
 
-from games.models import Map, GameType, GameMode, Veto, Pool, Game, Match, GameStatus
+from games.models import Map, GameType, GameMode, Veto, Pool, Game, Match, GameStatus, PlayerMatch
 from users.models import User
 from users.services import get_steam_faceit_user_data
 
@@ -20,7 +21,7 @@ def get_user_lobby_data(user: AbstractUser) -> dict:
     user_data = {'user_in_lobby': False}
     if user.is_authenticated and not user.is_superuser:
 
-        user_lobby = get_player_lobby(user)
+        user_lobby = is_player_in_lobby(user)
         user_data['user_in_lobby'] = user_lobby
 
         if user_lobby:
@@ -34,11 +35,15 @@ def get_lobby_by_slug(slug: str) -> Lobby | None:
     lobby = Lobby.objects.filter(slug=slug)
     return lobby[0] if lobby else None
 
+def get_user_match(user: User):
+    match = PlayerMatch.objects.filter(user=user)
+    return match[0] if match else None
 
-def get_player_lobby(user: AbstractUser) -> PlayerLobby | None:
-    """Получить лобби, в котором находится пользователь"""
-    player_lobby = PlayerLobby.objects.filter(user=user, in_lobby=True)
-    return player_lobby[0] if player_lobby else None
+
+def is_player_in_lobby(user: AbstractUser) -> PlayerLobby | None:
+    """Проверить находится ли пользователь в лобби"""
+    player_lobby = PlayerLobby.objects.filter(user=user)
+    return player_lobby[0] if player_lobby else False
 
 
 def get_count_players_in_lobby(lobby: PlayerLobby) -> int:
@@ -81,7 +86,7 @@ def get_players_lobby_sorted_by_time(lobby: Lobby) -> list:
 def check_user_for_join_lobby(request: WSGIRequest, user: User, slug: str) -> None:
     """Проверка пользователя перед входом в лобби"""
     lobby = get_lobby_by_slug(slug)
-    user_lobby = get_player_lobby(user)
+    user_lobby = is_player_in_lobby(user)
     user_data = get_steam_faceit_user_data(user)
     user_level = user_data['faceit_user_data']['games'][0]['skill_level']
 
@@ -101,8 +106,9 @@ def check_user_for_join_lobby(request: WSGIRequest, user: User, slug: str) -> No
         messages.error(request, 'Недостаточно TWIM-COIN на балансе для подключения к лобби.')
 
 
-def check_user_for_create_lobby(request: WSGIRequest, user: User, min_lvl_enter: int, max_lvl_enter: int,
+def check_user_for_create_lobby(request: WSGIRequest, min_lvl_enter: int, max_lvl_enter: int,
                                 bet: Decimal) -> None:
+    user = request.user
     user_level = get_steam_faceit_user_data(user)['faceit_user_data']['games'][0]['skill_level']
 
     if user_level < int(min_lvl_enter):
@@ -114,7 +120,7 @@ def check_user_for_create_lobby(request: WSGIRequest, user: User, min_lvl_enter:
     if user.balance < bet:
         messages.error(request, 'Недостаточно TWIM-COIN на балансе для создания лобби.')
 
-    if get_player_lobby(user):
+    if is_player_in_lobby(user):
         messages.error(request, 'Вы уже находитесь в другом лобби.')
 
 
@@ -133,7 +139,7 @@ def create_match_lobby_and_games(
         min_lvl_enter: int,
         max_lvl_enter: int,
         bet: Decimal,
-        slug: str) -> None:
+        game_map: str,) -> Match:
     """Создание матча, лобби и игр"""
 
     user = request.user
@@ -142,31 +148,35 @@ def create_match_lobby_and_games(
     veto = Veto.objects.get(name=request.POST.get('veto'))
     pool = request.POST.get('pool')
     password_lobby = request.POST.get('password_lobby')
-    game_map = Map.objects.get(name=request.POST.get('maps'))
+    game_map = Map.objects.get(name=game_map)
 
     match = Match.objects.create(
         type=game_type,
         mode=game_mode,
         veto=veto,
+        map=game_map,
+        pool=Pool.objects.get(name=pool),
+        bet=bet,
+        max_lvl_enter=max_lvl_enter,
+        min_lvl_enter=min_lvl_enter,
     )
 
     lobby = Lobby.objects.create(
         leader=user,
         match=match,
-        map=game_map,
-        pool=Pool.objects.get(name=pool),
-        bet=bet,
         password_lobby=password_lobby,
-        max_lvl_enter=max_lvl_enter,
-        min_lvl_enter=min_lvl_enter,
-        slug=slug,
     )
 
     PlayerLobby.objects.create(
         lobby=lobby,
         user=user,
-        team_id=0,  # Исправить на метод определения команды
-        in_lobby=True
+        time_enter=timezone.now()
+    )
+
+    PlayerMatch.objects.create(
+        match=match,
+        user=user,
+        team=1,
     )
 
     for i in range(int(game_mode.name[-1])):
@@ -176,3 +186,5 @@ def create_match_lobby_and_games(
             status=GameStatus.objects.get(name='preparing'),
             match=match
         )
+
+    return match

@@ -96,6 +96,17 @@ class Match(models.Model):
     type = models.ForeignKey(GameType, on_delete=models.PROTECT, verbose_name='Тип игры')
     mode = models.ForeignKey(GameMode, on_delete=models.PROTECT, verbose_name='Режим BEST_OF')
     veto = models.ForeignKey(Veto, on_delete=models.PROTECT, verbose_name='Вето')
+    map = models.ForeignKey(Map, on_delete=models.PROTECT, max_length=255, verbose_name='Карта')
+    pool = models.ForeignKey(Pool, on_delete=models.PROTECT, verbose_name='Пул')
+    bet = models.IntegerField(default=0, verbose_name='Ставка')
+    max_lvl_enter = models.IntegerField(null=True, verbose_name='Максимальный уровень для входа')
+    min_lvl_enter = models.IntegerField(null=True, verbose_name='Минимальный уровень для входа')
+
+class PlayerMatch(models.Model):
+    """Модель игроки матч"""
+    match = models.ForeignKey(Match, on_delete=models.CASCADE, verbose_name='Матч')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    team = models.BooleanField(verbose_name='Команда')
 
 
 class Game(models.Model):

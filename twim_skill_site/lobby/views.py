@@ -30,7 +30,8 @@ class CreateLobbyPage(View):
             return redirect('main')
 
         user = request.user
-        player_in_lobby = get_player_lobby(user)
+        player_in_lobby = is_player_in_lobby(user)
+        players_match = get_user_match(user)
 
         context = {
             'games_types': GameType.objects.all(),
@@ -42,7 +43,7 @@ class CreateLobbyPage(View):
 
         if player_in_lobby:
             messages.error(request, 'Вы уже находитесь в другом лобби.')
-            return redirect('detail_lobby', slug=player_in_lobby.lobby.slug)
+            return redirect('detail_lobby', id=players_match.id)
 
         return render(request, 'lobby/create_lobby.html', context)
 
@@ -50,7 +51,6 @@ class CreateLobbyPage(View):
     def post(request) -> HttpResponseRedirect:
         """Обработчик post-запроса создания лобби"""
 
-        user = request.user
         context = {
             'games_types': GameType.objects.all(),
             'games_modes': GameMode.objects.all(),
@@ -63,17 +63,16 @@ class CreateLobbyPage(View):
         bet = Decimal(request.POST.get('bet')) if request.POST.get('bet') else MINIMAL_BET
         max_lvl_enter = int(request.POST.get('max_lvl_enter') if request.POST.get('max_lvl_enter') else MAX_LEVEL_ENTRE)
         min_lvl_enter = int(request.POST.get('min_lvl_enter') if request.POST.get('min_lvl_enter') else MIN_LEVEL_ENTRE)
-        slug = slugify(f"{game_map}-{user.id}-{timezone.now().strftime('%Y%m%d%H%M%S')}")
 
         # Валидация пользователя для создания лобби
-        check_user_for_create_lobby(request, user, min_lvl_enter, max_lvl_enter, bet)
+        check_user_for_create_lobby(request, min_lvl_enter, max_lvl_enter, bet)
         if messages.get_messages(request):
             return render(request, 'lobby/create_lobby.html', context)
 
         # Создание лобби и игр
-        create_match_lobby_and_games(request, min_lvl_enter, max_lvl_enter, bet, slug)
+        match = create_match_lobby_and_games(request, min_lvl_enter, max_lvl_enter, bet, game_map)
 
-        return redirect('detail_lobby', slug=slug)
+        return redirect('http://127.0.0.1:8000/logout', id=match.pk)
 
 
 class DetailLobbyPage(View):
@@ -84,7 +83,7 @@ class DetailLobbyPage(View):
         user = request.user
         lobby = Lobby.objects.get(slug=slug)
         count_players_in_lobby = PlayerLobby.objects.filter(lobby=lobby, in_lobby=True).count()
-        player_lobby = get_player_lobby(user)
+        player_lobby = is_player_in_lobby(user)
         teams = (1, 2)
 
         if lobby.leader == user:
@@ -97,7 +96,7 @@ class DetailLobbyPage(View):
             'count_players_in_lobby': count_players_in_lobby,
             'user_data': get_steam_faceit_user_data(user),
             'user_lobby_data': get_user_lobby_data(user),
-            'player_in_lobby': get_player_lobby(user),
+            'player_in_lobby': is_player_in_lobby(user),
             'games': Game.objects.filter(match=lobby.match).order_by('pk'),
             'players': PlayerLobby.objects.filter(lobby=lobby, in_lobby=True),
             'teams': teams,
@@ -111,7 +110,7 @@ def leave_from_lobby(request: WSGIRequest) -> HttpResponse:
 
     user = request.user
 
-    player_lobby = get_player_lobby(user)
+    player_lobby = is_player_in_lobby(user)
     lobby = player_lobby.lobby
 
     if lobby.leader == user:
@@ -190,7 +189,7 @@ def join_team(request):
         user = request.user
         team_id = request.POST.get('team_id')
 
-        player_lobby = get_player_lobby(user)
+        player_lobby = is_player_in_lobby(user)
         player_lobby.team_id = team_id
         player_lobby.save()
 
