@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from decimal import Decimal
@@ -37,13 +38,13 @@ def get_lobby_by_slug(slug: str) -> Lobby | None:
 
 def get_player_lobby(user: AbstractUser) -> PlayerLobby | None:
     """Получить лобби, в котором находится пользователь"""
-    player_lobby = PlayerLobby.objects.filter(user=user, in_lobby=True)
+    player_lobby = PlayerLobby.objects.filter(user=user)
     return player_lobby[0] if player_lobby else None
 
 
 def get_count_players_in_lobby(lobby: PlayerLobby) -> int:
     """Получить количество игроков в лобби"""
-    return PlayerLobby.objects.filter(lobby=lobby.lobby, in_lobby=True).count()
+    return PlayerLobby.objects.filter(lobby=lobby.lobby).count()
 
 
 def leave_lobby(lobby: PlayerLobby) -> None:
@@ -165,8 +166,7 @@ def create_match_lobby_and_games(
     PlayerLobby.objects.create(
         lobby=lobby,
         user=user,
-        team_id=0,  # Исправить на метод определения команды
-        in_lobby=True
+        time_enter=datetime.datetime.now()
     )
 
     for i in range(int(game_mode.name[-1])):
